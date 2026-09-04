@@ -1,9 +1,225 @@
 /* ==========================================================
-   CUBO 3D — PROTOTIPO
+   01. VARIABLES DEL CUBO
 
-   Aquí construiremos la navegación tridimensional entre:
-   HOME · SOLUCIONES · CONTACTO
+   --cube-size:
+   Tamaño total del cubo.
 
-   De momento permanece vacío hasta comprobar que la
-   navegación básica funciona correctamente.
+   --cube-half:
+   Mitad exacta del tamaño. Se utiliza para colocar cada cara
+   en el espacio 3D.
+
+   --cube-duration:
+   Duración del giro entre secciones.
    ========================================================== */
+
+:root {
+    --cube-size: 130px;
+    --cube-half: calc(var(--cube-size) / 2);
+
+    --cube-duration: 700ms;
+
+    --cube-border: rgba(255, 255, 255, 0.18);
+    --cube-face-bg: rgba(15, 32, 51, 0.92);
+}
+
+
+/* ==========================================================
+   02. CONTENEDOR DE NAVEGACIÓN
+   Reserva el espacio superior donde vive el cubo.
+   ========================================================== */
+
+.cube-navigation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 4rem;
+
+    padding: 3rem 0 2rem;
+}
+
+
+/* ==========================================================
+   03. ESCENA 3D
+
+   perspective determina la profundidad visual.
+   Cuanto menor sea el valor, mayor será la deformación
+   producida por la perspectiva.
+   ========================================================== */
+
+.cube-scene {
+    width: var(--cube-size);
+    height: var(--cube-size);
+
+    perspective: 800px;
+}
+
+
+/* ==========================================================
+   04. CUBO
+
+   transform-style permite que sus hijos mantengan su
+   posición tridimensional.
+
+   El giro inicial deja visibles ligeramente la cara derecha
+   y la superior para que, incluso estando quieto, se perciba
+   como un objeto 3D.
+   ========================================================== */
+
+.navigation-cube {
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+
+    transform-style: preserve-3d;
+
+    transform: rotateX(-30deg) rotateY(-28deg);
+
+    transition:
+    transform var(--cube-duration)
+    cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+
+/* ==========================================================
+   05. CARAS DEL CUBO
+   Todas ocupan exactamente el mismo espacio y después
+   se desplazan/rotan hacia su posición tridimensional.
+   ========================================================== */
+
+.cube-face {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid var(--cube-border);
+    background: var(--cube-face-bg);
+
+    color: #ffffff;
+
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+
+    backface-visibility: hidden;
+}
+
+
+/* ==========================================================
+   06. CARAS INTERACTIVAS
+   Solo HOME, SOLUCIONES y CONTACTO son botones.
+   ========================================================== */
+
+button.cube-face {
+    cursor: pointer;
+}
+
+button.cube-face:hover {
+    background: rgba(23, 47, 72, 0.98);
+}
+
+
+/* ==========================================================
+   07. POSICIÓN DE CADA CARA
+   ========================================================== */
+
+.cube-face--front {
+    transform: rotateY(0deg) translateZ(var(--cube-half));
+}
+
+.cube-face--right {
+    transform: rotateY(90deg) translateZ(var(--cube-half));
+}
+
+.cube-face--back {
+    transform: rotateY(180deg) translateZ(var(--cube-half));
+}
+
+.cube-face--left {
+    transform: rotateY(-90deg) translateZ(var(--cube-half));
+}
+
+.cube-face--top {
+    transform: rotateX(90deg) translateZ(var(--cube-half));
+}
+
+.cube-face--bottom {
+    transform: rotateX(-90deg) translateZ(var(--cube-half));
+}
+
+/* ==========================================================
+   08. SELECTOR DE ÁREA
+
+   Control auxiliar para acceder siempre a HOME, SOLUCIONES
+   y CONTACTO.
+
+   Su apariencia es provisional. Más adelante decidiremos
+   cómo integrarlo con el cubo en la navegación definitiva.
+   ========================================================== */
+
+.section-selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 2rem;
+}
+
+
+.section-selector__button {
+    position: relative;
+
+    padding: 0.5rem 0;
+
+    border: 0;
+    background: transparent;
+
+    color: var(--text-secondary);
+
+    font: inherit;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+
+    cursor: pointer;
+
+    transition:
+        color 200ms ease,
+        transform 200ms ease;
+}
+
+
+.section-selector__button:hover {
+    color: var(--text-primary);
+}
+
+
+.section-selector__button.active {
+    color: var(--text-primary);
+
+    font-weight: 600;
+}
+
+
+/* Línea que identifica la sección actualmente abierta */
+
+.section-selector__button.active::after {
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+    bottom: 0;
+
+    width: 24px;
+    height: 2px;
+
+    background: var(--text-primary);
+
+    transform: translateX(-50%);
+}

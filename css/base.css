@@ -75,13 +75,23 @@ body {
 
 /* ==========================================================
    05. CONTENIDO PRINCIPAL
-   Centra el contenido del prototipo.
+   Define el espacio general donde se muestran las distintas
+   áreas de la web.
    ========================================================== */
 
 .site-content {
     width: min(90%, var(--content-width));
     margin: 0 auto;
 }
+
+
+/* ==========================================================
+   06. SECCIONES DE CONTENIDO
+
+   Normalmente solo existe una sección visible.
+   Durante una transición pueden coexistir brevemente la
+   sección saliente y la entrante para suavizar el cambio.
+   ========================================================== */
 
 .page-section {
     display: none;
@@ -95,9 +105,71 @@ body {
     text-align: center;
 }
 
+
+/* Sección actualmente visible */
+
 .page-section.active {
     display: flex;
 }
+
+
+/* ==========================================================
+   07. SALIDA DE UNA SECCIÓN
+
+   El contenido pierde presencia suavemente mientras comienza
+   el giro del cubo.
+
+   Los desplazamientos son deliberadamente pequeños para
+   evitar una sensación de "página volando".
+   ========================================================== */
+
+.page-section.leaving {
+    opacity: 0;
+
+    transform: translateY(8px) scale(0.99);
+
+    transition:
+        opacity 180ms ease,
+        transform 180ms ease;
+}
+
+
+/* ==========================================================
+   08. ENTRADA DE UNA SECCIÓN
+
+   La nueva sección comienza ligeramente desplazada y
+   transparente.
+   ========================================================== */
+
+.page-section.entering {
+    display: flex;
+
+    opacity: 0;
+
+    transform: translateY(-8px) scale(0.99);
+}
+
+
+/* Estado final de la entrada */
+
+.page-section.entering.entering-active {
+    opacity: 1;
+
+    transform: translateY(0) scale(1);
+
+    transition:
+        opacity 260ms ease,
+        transform 260ms ease;
+}
+
+
+/* ==========================================================
+   09. TIPOGRAFÍA PROVISIONAL DEL CONTENIDO
+
+   Estos valores son todavía de prototipo.
+   Posteriormente aplicaremos IBM Plex Sans y la jerarquía
+   tipográfica definitiva.
+   ========================================================== */
 
 .page-section h1 {
     margin-bottom: 1rem;

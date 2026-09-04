@@ -17,16 +17,106 @@
 </head>
 
 <body>
+    
+<!-- =====================================================
+     NAVEGACIÓN PRINCIPAL 3D
+     El cubo representa las tres áreas principales.
+
+     Cada área ocupa dos caras opuestas del cubo para que
+     HOME, SOLUCIONES y CONTACTO permanezcan accesibles
+     durante las distintas orientaciones del objeto.
+     ===================================================== -->
+<nav class="cube-navigation" aria-label="Navegación principal">
+
+    <div class="cube-scene">
+
+        <div class="navigation-cube" id="navigationCube">
+
+            <!-- Cara frontal: HOME -->
+            <button
+                class="cube-face cube-face--front"
+                type="button"
+                data-section="home">
+                HOME
+            </button>
+
+            <!-- Cara derecha: SOLUCIONES -->
+            <button
+                class="cube-face cube-face--right"
+                type="button"
+                data-section="solutions">
+                SOLUCIONES
+            </button>
+
+            <!-- Cara superior: CONTACTO -->
+            <button
+                class="cube-face cube-face--top"
+                type="button"
+                data-section="contact">
+                CONTACTO
+            </button>
+
+          <!-- Cara izquierda: SOLUCIONES -->
+<button
+    class="cube-face cube-face--left"
+    type="button"
+    data-section="solutions">
+    SOLUCIONES
+</button>
+
+<!-- Cara trasera: HOME -->
+<button
+    class="cube-face cube-face--back"
+    type="button"
+    data-section="home">
+    HOME
+</button>
+
+<!-- Cara inferior: CONTACTO -->
+<button
+    class="cube-face cube-face--bottom"
+    type="button"
+    data-section="contact">
+    CONTACTO
+</button> 
+
+        </div>
+
+    </div>
 
     <!-- =====================================================
-         NAVEGACIÓN PRINCIPAL
-         Prototipo inicial de HOME / SOLUCIONES / CONTACTO
+         SELECTOR DE ÁREA
+         Permite acceder siempre a cualquiera de las tres
+         secciones, independientemente de qué caras del cubo
+         estén visibles en ese momento.
          ===================================================== -->
-    <nav class="main-navigation">
-        <button type="button" data-section="home">HOME</button>
-        <button type="button" data-section="solutions">SOLUCIONES</button>
-        <button type="button" data-section="contact">CONTACTO</button>
-    </nav>
+
+    <div class="section-selector">
+
+        <button
+            type="button"
+            class="section-selector__button active"
+            data-section="home">
+            HOME
+        </button>
+
+        <button
+            type="button"
+            class="section-selector__button"
+            data-section="solutions">
+            SOLUCIONES
+        </button>
+
+        <button
+            type="button"
+            class="section-selector__button"
+            data-section="contact">
+            CONTACTO
+        </button>
+
+    </div>
+
+</nav>
 
 
     <!-- =====================================================
