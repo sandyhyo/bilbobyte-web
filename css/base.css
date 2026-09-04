@@ -1,0 +1,112 @@
+/* ==========================================================
+   01. VARIABLES GLOBALES
+   Valores que utilizaremos en todo el sitio.
+   ========================================================== */
+
+:root {
+    --bg-primary: #0b1623;
+
+    --text-primary: #ffffff;
+    --text-secondary: #d4dae0;
+
+    --content-width: 1200px;
+}
+
+
+/* ==========================================================
+   02. RESET BÁSICO
+   Elimina diferencias innecesarias entre navegadores.
+   ========================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+
+/* ==========================================================
+   03. CUERPO DE LA WEB
+   Estilos generales del documento.
+   ========================================================== */
+
+body {
+    min-height: 100vh;
+
+    background: var(--bg-primary);
+    color: var(--text-primary);
+
+    font-family: Arial, sans-serif;
+}
+
+
+/* ==========================================================
+   04. NAVEGACIÓN TEMPORAL
+   Estos botones desaparecerán o cambiarán cuando construyamos
+   la navegación definitiva mediante el cubo.
+   ========================================================== */
+
+.main-navigation {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+
+    padding: 2rem;
+}
+
+.main-navigation button {
+    border: 0;
+    background: transparent;
+
+    color: var(--text-secondary);
+
+    font: inherit;
+    cursor: pointer;
+}
+
+.main-navigation button:hover {
+    color: var(--text-primary);
+}
+
+
+/* ==========================================================
+   05. CONTENIDO PRINCIPAL
+   Centra el contenido del prototipo.
+   ========================================================== */
+
+.site-content {
+    width: min(90%, var(--content-width));
+    margin: 0 auto;
+}
+
+.page-section {
+    display: none;
+
+    min-height: 70vh;
+
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    text-align: center;
+}
+
+.page-section.active {
+    display: flex;
+}
+
+.page-section h1 {
+    margin-bottom: 1rem;
+
+    font-size: clamp(3rem, 8vw, 7rem);
+}
+
+.page-section p {
+    color: var(--text-secondary);
+
+    font-size: 1.2rem;
+}

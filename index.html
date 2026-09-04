@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BilboByte</title>
+
+    <!-- =====================================================
+         HOJAS DE ESTILO
+         base.css: estilos generales de la web
+         cube.css: navegación y animaciones del cubo
+         ===================================================== -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/cube.css">
+</head>
+
+<body>
+
+    <!-- =====================================================
+         NAVEGACIÓN PRINCIPAL
+         Prototipo inicial de HOME / SOLUCIONES / CONTACTO
+         ===================================================== -->
+    <nav class="main-navigation">
+        <button type="button" data-section="home">HOME</button>
+        <button type="button" data-section="solutions">SOLUCIONES</button>
+        <button type="button" data-section="contact">CONTACTO</button>
+    </nav>
+
+
+    <!-- =====================================================
+         CONTENIDO PRINCIPAL
+         De momento solo mostramos una sección cada vez.
+         ===================================================== -->
+    <main class="site-content">
+
+        <section id="home" class="page-section active">
+            <h1>BILBOBYTE</h1>
+            <p>Infraestructura invisible para que tu negocio avance.</p>
+        </section>
+
+        <section id="solutions" class="page-section">
+            <h1>SOLUCIONES</h1>
+            <p>CONNECT · CORE · VAULT · SUITE · PRINT</p>
+        </section>
+
+        <section id="contact" class="page-section">
+            <h1>CONTACTO</h1>
+            <p>¿Hablamos?</p>
+        </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+         cube.js controlará posteriormente la navegación 3D.
+         ===================================================== -->
+    <script src="js/cube.js"></script>
+
+</body>
+
+</html>
