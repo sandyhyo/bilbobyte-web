@@ -1,50 +1,53 @@
- /* ==========================================================
-   01. CONFIGURACIÓN DE TRANSICIONES
+/* ==========================================================
+   01. CONFIGURACIÓN DE LA NAVEGACIÓN 3D
 
    CUBE_DURATION:
-   Duración completa del giro del cubo.
-   Debe coincidir con --cube-duration en cube.css.
+   Duración completa del giro.
 
    CONTENT_CHANGE_DELAY:
-   Momento, dentro del giro, en el que comienza a aparecer
-   el contenido de la nueva sección.
+   Momento durante el giro en el que cambia el contenido.
 
-   Estos dos valores permiten ajustar fácilmente la sensación
-   general de la navegación.
+   IMPORTANTE:
+   El cubo mantiene una inclinación visual constante de
+   -30º en X y -28º en Y.
+
+   A esa inclinación se añaden giros exactos de 90º para
+   mostrar HOME, SOLUCIONES o CONTACTO.
    ========================================================== */
 
-const CUBE_DURATION = 700;
-const CONTENT_CHANGE_DELAY = 380;
+const CUBE_DURATION = 800;
+const CONTENT_CHANGE_DELAY = 420;
+
+const BASE_X = -30;
+const BASE_Y = -28;
 
 
 /* ==========================================================
    02. ELEMENTOS PRINCIPALES
    ========================================================== */
 
-const navigationCube = document.getElementById("navigationCube");
+const navigationCube =
+    document.getElementById("navigationCube");
 
-const navigationButtons = document.querySelectorAll(
-    "[data-section]"
-);
+const navigationButtons =
+    document.querySelectorAll("[data-section]");
 
-const sectionSelectorButtons = document.querySelectorAll(
-    ".section-selector__button"
-);
+const sectionSelectorButtons =
+    document.querySelectorAll(".section-selector__button");
 
-const pageSections = document.querySelectorAll(
-    ".page-section"
-);
+const pageSections =
+    document.querySelectorAll(".page-section");
 
 
 /* ==========================================================
-   03. ESTADO ACTUAL
+   03. ESTADO DE LA NAVEGACIÓN
 
    currentSection:
-   Área principal que se encuentra abierta.
+   Sección que se encuentra actualmente abierta.
 
    isCubeRotating:
-   Evita nuevas órdenes mientras existe una transición
-   principal en curso.
+   Impide lanzar otra navegación mientras el cubo está
+   realizando un giro.
    ========================================================== */
 
 let currentSection = "home";
@@ -52,30 +55,35 @@ let isCubeRotating = false;
 
 
 /* ==========================================================
-   04. POSICIONES DEL CUBO
+   04. ROTACIÓN LÓGICA DEL CUBO
 
-   Cada sección tiene una orientación que coloca su cara
-   correspondiente como protagonista.
+   HOME es nuestra posición 0 / 0.
 
-   Conservamos cierta inclinación para que el objeto siga
-   percibiéndose tridimensional incluso en reposo.
+   SOLUCIONES está físicamente a la derecha:
+   necesita un giro de -90º sobre Y.
+
+   CONTACTO está físicamente arriba:
+   necesita un giro de -90º sobre X.
+
+   Estos valores representan únicamente el giro del objeto.
+   La inclinación visual BASE_X / BASE_Y se añade después.
    ========================================================== */
 
-const cubePositions = {
+const cubeRotations = {
 
     home: {
-        x: -30,
-        y: -28
+        x: 0,
+        y: 0
     },
 
     solutions: {
-        x: -30,
-        y: -118
+        x: 0,
+        y: -90
     },
 
     contact: {
-        x: -120,
-        y: -28
+        x: -90,
+        y: 0
     }
 
 };
@@ -84,28 +92,38 @@ const cubePositions = {
 /* ==========================================================
    05. ORIENTAR EL CUBO
 
-   Aplica las rotaciones X/Y correspondientes al destino.
-   CSS se encarga de interpolar el movimiento.
+   Calculamos primero la orientación final.
+
+   El navegador recibe UN único cambio de transform y CSS
+   interpola desde la orientación actual hasta la siguiente.
+
+   No eliminamos transition ni sustituimos clases durante
+   este proceso.
    ========================================================== */
 
 function rotateCube(sectionName) {
 
-    const position = cubePositions[sectionName];
+    const rotation = cubeRotations[sectionName];
 
-    if (!position) {
+    if (!rotation) {
         return;
     }
 
+    const finalX =
+        BASE_X + rotation.x;
+
+    const finalY =
+        BASE_Y + rotation.y;
+
     navigationCube.style.transform =
-        `rotateX(${position.x}deg) rotateY(${position.y}deg)`;
+        `rotateX(${finalX}deg) rotateY(${finalY}deg)`;
 }
 
 
 /* ==========================================================
-   06. ACTUALIZAR SELECTOR
+   06. ACTUALIZAR SELECTOR PRINCIPAL
 
-   Marca visualmente cuál de las tres áreas principales
-   se encuentra abierta.
+   Marca HOME, SOLUCIONES o CONTACTO como sección activa.
    ========================================================== */
 
 function updateSectionSelector(sectionName) {
@@ -115,45 +133,124 @@ function updateSectionSelector(sectionName) {
         const isActive =
             button.dataset.section === sectionName;
 
-        button.classList.toggle("active", isActive);
+        button.classList.toggle(
+            "active",
+            isActive
+        );
+
     });
+
 }
 
 
 /* ==========================================================
-   07. NAVEGAR ENTRE ÁREAS
+   07. CAMBIAR CONTENIDO
 
-   La transición completa funciona como una única secuencia:
+   El cambio de contenido se realiza mientras el cubo está
+   en movimiento para que navegación y página formen una
+   única transición.
+   ========================================================== */
 
-   1. Comienza la salida del contenido actual.
-   2. El cubo empieza a girar simultáneamente.
-   3. Durante el giro aparece el nuevo contenido.
-   4. El cubo termina de asentarse.
-   5. Se desbloquea nuevamente la navegación.
+function changeContent(sectionName) {
 
-   El objetivo es evitar la sensación artificial de:
-   "primero gira el cubo y después cambia la página".
+    const currentPage =
+        document.getElementById(currentSection);
+
+    const targetPage =
+        document.getElementById(sectionName);
+
+
+    /* ------------------------------------------------------
+       Retirar sección anterior
+       ------------------------------------------------------ */
+
+    if (currentPage) {
+
+        currentPage.classList.remove(
+            "active",
+            "leaving",
+            "entering",
+            "entering-active"
+        );
+
+    }
+
+
+    /* ------------------------------------------------------
+       Mostrar nueva sección en su estado inicial
+       ------------------------------------------------------ */
+
+    if (targetPage) {
+
+        targetPage.classList.add(
+            "active",
+            "entering"
+        );
+
+
+        /*
+         Dos frames permiten que el navegador registre
+         primero el estado inicial antes de comenzar
+         la transición de entrada.
+        */
+
+        requestAnimationFrame(() => {
+
+            requestAnimationFrame(() => {
+
+                targetPage.classList.add(
+                    "entering-active"
+                );
+
+            });
+
+        });
+
+    }
+
+
+    currentSection = sectionName;
+
+    updateSectionSelector(sectionName);
+}
+
+
+/* ==========================================================
+   08. NAVEGAR ENTRE ÁREAS
+
+   SECUENCIA:
+
+   0 ms
+   ├── contenido actual comienza a desaparecer
+   └── cubo comienza su giro
+
+   420 ms
+   └── aparece el nuevo contenido
+
+   800 ms
+   └── termina el giro y se desbloquea la navegación
    ========================================================== */
 
 function navigateTo(sectionName) {
 
     /* ------------------------------------------------------
-       Evitar cambios mientras existe una transición activa
-       o si ya estamos en la sección solicitada.
+       Validaciones
        ------------------------------------------------------ */
 
     if (
         isCubeRotating ||
-        sectionName === currentSection
+        sectionName === currentSection ||
+        !cubeRotations[sectionName]
     ) {
         return;
     }
+
 
     isCubeRotating = true;
 
 
     /* ------------------------------------------------------
-       1. SALIDA DEL CONTENIDO ACTUAL
+       1. Comenzar salida del contenido actual
        ------------------------------------------------------ */
 
     const currentPage =
@@ -165,75 +262,42 @@ function navigateTo(sectionName) {
 
 
     /* ------------------------------------------------------
-       2. INICIO DEL GIRO DEL CUBO
+       2. Forzar al navegador a confirmar el estado actual
+
+       Esta lectura provoca que el navegador cierre el frame
+       anterior antes de recibir la nueva transformación.
+
+       Así evitamos que origen y destino se procesen dentro
+       del mismo ciclo de renderizado y aparezca un salto.
        ------------------------------------------------------ */
 
-    rotateCube(sectionName);
+    navigationCube.getBoundingClientRect();
 
 
     /* ------------------------------------------------------
-       3. CAMBIO DE CONTENIDO DURANTE EL GIRO
+       3. Iniciar giro
+       ------------------------------------------------------ */
 
-       La nueva sección aparece antes de que el cubo haya
-       terminado completamente su movimiento.
+    requestAnimationFrame(() => {
+
+        rotateCube(sectionName);
+
+    });
+
+
+    /* ------------------------------------------------------
+       4. Cambiar contenido durante el movimiento
        ------------------------------------------------------ */
 
     window.setTimeout(() => {
 
-        if (currentPage) {
-
-            currentPage.classList.remove(
-                "active",
-                "leaving"
-            );
-        }
-
-
-        const targetPage =
-            document.getElementById(sectionName);
-
-        if (targetPage) {
-
-            targetPage.classList.add(
-                "active",
-                "entering"
-            );
-
-
-            /*
-             Esperamos dos frames.
-
-             Esto permite que el navegador registre primero
-             el estado inicial transparente/desplazado antes
-             de aplicar el estado final de la animación.
-            */
-
-            requestAnimationFrame(() => {
-
-                requestAnimationFrame(() => {
-
-                    targetPage.classList.add(
-                        "entering-active"
-                    );
-
-                });
-
-            });
-        }
-
-
-        currentSection = sectionName;
-
-        updateSectionSelector(sectionName);
+        changeContent(sectionName);
 
     }, CONTENT_CHANGE_DELAY);
 
 
     /* ------------------------------------------------------
-       4. FIN DE LA TRANSICIÓN
-
-       Eliminamos las clases temporales y permitimos una
-       nueva navegación.
+       5. Finalizar navegación
        ------------------------------------------------------ */
 
     window.setTimeout(() => {
@@ -247,19 +311,22 @@ function navigateTo(sectionName) {
                 "entering",
                 "entering-active"
             );
+
         }
 
         isCubeRotating = false;
 
     }, CUBE_DURATION);
+
 }
 
 
 /* ==========================================================
-   08. EVENTOS DE NAVEGACIÓN
+   09. EVENTOS
 
-   Tanto las caras interactivas del cubo como el selector
-   utilizan data-section para indicar su destino.
+   Las caras del cubo y el selector inferior comparten
+   data-section, por lo que ambos utilizan la misma función
+   de navegación.
    ========================================================== */
 
 navigationButtons.forEach((button) => {
@@ -270,6 +337,38 @@ navigationButtons.forEach((button) => {
             button.dataset.section;
 
         navigateTo(targetSection);
+
+    });
+
+});
+
+
+/* ==========================================================
+   10. ESTADO INICIAL
+
+   Establecemos explícitamente la posición HOME.
+
+   Desactivamos momentáneamente la transición para evitar
+   que el cubo haga una animación al cargar la página.
+   ========================================================== */
+
+navigationCube.style.transition = "none";
+
+navigationCube.style.transform =
+    `rotateX(${BASE_X}deg) rotateY(${BASE_Y}deg)`;
+
+
+/*
+Esperamos dos frames antes de devolver el control de la
+transición a cube.css.
+*/
+
+requestAnimationFrame(() => {
+
+    requestAnimationFrame(() => {
+
+        navigationCube.style.transition = "";
+
     });
 
 });

@@ -1,0 +1,291 @@
+/* ==========================================================
+   01. HOME — CONFIGURACIÓN GENERAL
+   ========================================================== */
+
+#home {
+    padding-bottom: var(--section-space);
+}
+
+
+/* ==========================================================
+   02. HERO
+
+   Primera impresión de BilboByte.
+
+   El logotipo sustituirá posteriormente al tratamiento
+   tipográfico provisional del nombre.
+   ========================================================== */
+
+.home-hero {
+    display: flex;
+    align-items: center;
+
+    min-height: 55vh;
+
+    padding:
+        clamp(4rem, 10vh, 8rem)
+        0
+        var(--section-space);
+}
+
+
+.home-hero__content {
+    max-width: 900px;
+}
+
+
+.home-hero__title {
+    margin-bottom: 1rem;
+
+    font-size: clamp(4rem, 9vw, 8.5rem);
+    font-weight: 700;
+
+    letter-spacing: -0.045em;
+}
+
+
+.home-hero__claim {
+    max-width: 700px;
+
+    margin-bottom: 0;
+
+    color: var(--text-secondary);
+
+    font-size: clamp(1.15rem, 2vw, 1.55rem);
+    font-weight: 400;
+
+    line-height: 1.45;
+}
+
+
+/* ==========================================================
+   03. BLOQUES DE HOME
+
+   Estructura reutilizable para combinar texto y fotografía.
+   ========================================================== */
+
+.home-block {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(320px, 0.85fr);
+
+    align-items: center;
+
+    gap: var(--block-gap);
+
+    padding: var(--section-space) 0;
+
+    border-top: 1px solid var(--border-soft);
+}
+
+
+/* ==========================================================
+   04. TEXTO DE LOS BLOQUES
+   ========================================================== */
+
+.home-block__text {
+    max-width: var(--reading-width);
+}
+
+
+.home-block__text h2 {
+    margin-bottom: 2rem;
+
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 600;
+
+    letter-spacing: -0.025em;
+}
+
+
+.home-block__text p {
+    margin-bottom: 1.4rem;
+
+    font-size: clamp(1rem, 1.3vw, 1.1rem);
+}
+
+
+.home-block__text p:last-child {
+    margin-bottom: 0;
+}
+
+
+/* ==========================================================
+   05. PRESENTACIÓN
+
+   El bloque utiliza texto + fotografía.
+
+   La fotografía definitiva mostrará previsiblemente a los
+   responsables de BilboByte trabajando, sin necesidad de
+   mostrar sus rostros.
+   ========================================================== */
+
+.home-block--presentation .photo-placeholder {
+    max-width: 520px;
+
+    justify-self: end;
+}
+
+
+/* ==========================================================
+   06. PRODUCTOS
+
+   De momento este bloque es principalmente textual.
+   Mantiene espacio y jerarquía propios antes del selector
+   de soluciones.
+   ========================================================== */
+
+.home-block--products {
+    grid-template-columns: 1fr;
+}
+
+
+.home-block--products .home-block__text {
+    max-width: 850px;
+}
+
+
+/* ==========================================================
+   07. SELECTOR DE SOLUCIONES
+
+   Primera representación del navegador:
+   CONNECT · CORE · VAULT · SUITE · PRINT
+
+   Todavía no tiene conectada la navegación.
+   ========================================================== */
+
+.home-solutions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 1.5rem;
+
+    padding:
+        clamp(3rem, 6vw, 5rem)
+        0;
+
+    border-top: 1px solid var(--border-soft);
+    border-bottom: 1px solid var(--border-soft);
+}
+
+
+.home-solutions button {
+    position: relative;
+
+    padding: 0.7rem 0;
+
+    border: 0;
+    background: transparent;
+
+    color: var(--text-muted);
+
+    font-size: clamp(0.85rem, 1.4vw, 1.05rem);
+    font-weight: 500;
+
+    letter-spacing: 0.08em;
+
+    cursor: pointer;
+
+    transition:
+        color 200ms ease,
+        transform 200ms ease;
+}
+
+
+.home-solutions button:hover {
+    color: var(--text-primary);
+
+    transform: scale(1.04);
+}
+
+
+/* Línea blanca que aparecerá bajo la solución enfocada */
+
+.home-solutions button::after {
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+    bottom: 0;
+
+    width: 0;
+    height: 2px;
+
+    background: var(--text-primary);
+
+    transform: translateX(-50%);
+
+    transition: width 200ms ease;
+}
+
+
+.home-solutions button:hover::after {
+    width: 28px;
+}
+
+
+/* ==========================================================
+   08. TABLET
+   ========================================================== */
+
+@media (max-width: 900px) {
+
+    .home-block {
+        grid-template-columns: 1fr;
+    }
+
+
+    .home-block--presentation .photo-placeholder {
+        max-width: 650px;
+
+        justify-self: start;
+    }
+
+
+    .home-solutions {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+
+        column-gap: 2rem;
+    }
+}
+
+
+/* ==========================================================
+   09. MÓVIL
+   ========================================================== */
+
+@media (max-width: 600px) {
+
+    .home-hero {
+        min-height: 55vh;
+
+        padding-top: 3rem;
+    }
+
+
+    .home-hero__title {
+        font-size: clamp(3.2rem, 17vw, 5rem);
+    }
+
+
+    .home-block {
+        padding:
+            clamp(4rem, 15vw, 6rem)
+            0;
+    }
+
+
+    .photo-placeholder {
+        aspect-ratio: 16 / 10;
+    }
+
+
+    .home-solutions {
+        gap: 1rem 1.6rem;
+    }
+}

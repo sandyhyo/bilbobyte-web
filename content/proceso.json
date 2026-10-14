@@ -1,0 +1,22 @@
+[
+  {
+    "numero": 1,
+    "titulo": "Estudio de Necesidades",
+    "descripcion": "Analizamos en profundidad tu caso concreto: el archivo 3D o pieza a reproducir, o las áreas de infraestructura y gestión que tu negocio necesita mejorar."
+  },
+  {
+    "numero": 2,
+    "titulo": "Propuesta Ajustada",
+    "descripcion": "Seleccionamos las herramientas y materiales adecuados. Te presentamos un presupuesto transparente sin cuotas ocultas y con plazos de entrega definidos."
+  },
+  {
+    "numero": 3,
+    "titulo": "Implantación o Fabricación",
+    "descripcion": "Instalamos y configuramos el equipamiento en tus instalaciones o fabricamos tus piezas 3D con tolerancias mecánicas verificadas."
+  },
+  {
+    "numero": 4,
+    "titulo": "Acompañamiento & Autonomía",
+    "descripcion": "Te entregamos el control total de tu solución, con la formación y el soporte técnico necesario para garantizar su funcionamiento continuo."
+  }
+]

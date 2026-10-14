@@ -1,0 +1,32 @@
+{
+  "titulo": "Presentación",
+  "kicker": "¿Cómo nace BilboByte?",
+  "subtitulo": "Nuestra visión y objetivos",
+  "parrafos": [
+    "BilboByte nace con la voluntad de dar visibilidad al alcance que ofrecen las tecnologías de código abierto frente a los productos tradicionales del sector tecnológico.",
+    "Tras años trabajando con algunas de ellas, hemos podido ver cómo han evolucionado y madurado, hasta convertirse en herramientas capaces de ofrecer soluciones sólidas y profesionales. Por desgracia, muchas veces pasan desapercibidas fuera de los sectores especializados.",
+    "Por eso queremos brindar su acceso a pequeñas y medianas empresas que buscan mejorar su infraestructura, sin asumir necesariamente los elevados costes normalmente asociados a ese tipo de soluciones.",
+    "Partiendo del estudio de las necesidades derivadas de cada proyecto, nos proponemos buscar una solución ajustada, seleccionando las herramientas adecuadas y proporcionando tanto el equipamiento necesario para su implantación, como el soporte para mantenerla. Apostando por un modelo que permita al cliente adquirir progresivamente su propia infraestructura y ganar autonomía sobre ella."
+  ],
+  "lema": "Infraestructura invisible para que tu negocio avance.",
+  "valores": [
+    {
+      "titulo": "Autonomía e infraestructura propia",
+      "descripcion": "El cliente es dueño de sus datos y equipamiento, sin depender de suscripciones abusivas o tecnologías cerradas."
+    },
+    {
+      "titulo": "Tecnología de código abierto madura",
+      "descripcion": "Implementamos herramientas profesionales, estables y probadas para ofrecer la máxima fiabilidad."
+    },
+    {
+      "titulo": "Soluciones ajustadas y soporte cercano",
+      "descripcion": "Estudiamos cada necesidad concreta y proporcionamos tanto el equipamiento como el acompañamiento técnico continuo."
+    }
+  ],
+  "metricas": [
+    { "cifra": "100%", "etiqueta": "Control de tu Información" },
+    { "cifra": "5+", "etiqueta": "Soluciones Engine Room Bilbao Modulares" },
+    { "cifra": "+500", "etiqueta": "Piezas 3D Fabricadas" },
+    { "cifra": "<24h", "etiqueta": "Tiempo de Respuesta" }
+  ]
+}

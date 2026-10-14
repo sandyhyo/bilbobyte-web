@@ -13,10 +13,10 @@
    ========================================================== */
 
 :root {
-    --cube-size: 130px;
+    --cube-size: 90px;
     --cube-half: calc(var(--cube-size) / 2);
 
-    --cube-duration: 700ms;
+    --cube-duration: 800ms;
 
     --cube-border: rgba(255, 255, 255, 0.18);
     --cube-face-bg: rgba(15, 32, 51, 0.92);
@@ -33,7 +33,7 @@
     flex-direction: column;
     align-items: center;
 
-    gap: 4rem;
+    gap: 2.75rem;
 
     padding: 3rem 0 2rem;
 }
@@ -43,8 +43,6 @@
    03. ESCENA 3D
 
    perspective determina la profundidad visual.
-   Cuanto menor sea el valor, mayor será la deformación
-   producida por la perspectiva.
    ========================================================== */
 
 .cube-scene {
@@ -58,12 +56,11 @@
 /* ==========================================================
    04. CUBO
 
-   transform-style permite que sus hijos mantengan su
-   posición tridimensional.
+   El cubo conserva todas sus caras en espacio 3D.
 
-   El giro inicial deja visibles ligeramente la cara derecha
-   y la superior para que, incluso estando quieto, se perciba
-   como un objeto 3D.
+   La transición se aplica exclusivamente a transform para
+   que cualquier cambio de orientación sea interpolado por
+   el navegador.
    ========================================================== */
 
 .navigation-cube {
@@ -74,18 +71,22 @@
 
     transform-style: preserve-3d;
 
-    transform: rotateX(-30deg) rotateY(-28deg);
+    transform:
+        rotateX(-30deg)
+        rotateY(-28deg);
 
     transition:
-    transform var(--cube-duration)
-    cubic-bezier(0.65, 0, 0.35, 1);
+        transform var(--cube-duration)
+        cubic-bezier(0.45, 0, 0.20, 1);
+
+    will-change: transform;
 }
 
 
 /* ==========================================================
    05. CARAS DEL CUBO
-   Todas ocupan exactamente el mismo espacio y después
-   se desplazan/rotan hacia su posición tridimensional.
+
+   Todas las caras comparten dimensiones y aspecto.
    ========================================================== */
 
 .cube-face {
@@ -96,23 +97,41 @@
     align-items: center;
     justify-content: center;
 
+    margin: 0;
+    padding: 0.35rem;
+
     border: 1px solid var(--cube-border);
     background: var(--cube-face-bg);
 
     color: #ffffff;
 
-    font: inherit;
+    font-family: inherit;
     font-size: 0.85rem;
     font-weight: 600;
+    line-height: 1;
     letter-spacing: 0.08em;
+
+    white-space: nowrap;
 
     backface-visibility: hidden;
 }
 
 
 /* ==========================================================
-   06. CARAS INTERACTIVAS
-   Solo HOME, SOLUCIONES y CONTACTO son botones.
+   06. AJUSTE ESPECÍFICO — SOLUCIONES
+
+   La palabra SOLUCIONES necesita una escala menor para
+   conservar margen dentro de una cara de 90 px.
+   ========================================================== */
+
+.cube-face[data-section="solutions"] {
+    font-size: 0.75rem;
+    letter-spacing: 0.01em;
+}
+
+
+/* ==========================================================
+   07. CARAS INTERACTIVAS
    ========================================================== */
 
 button.cube-face {
@@ -125,41 +144,50 @@ button.cube-face:hover {
 
 
 /* ==========================================================
-   07. POSICIÓN DE CADA CARA
+   08. POSICIÓN DE LAS SEIS CARAS
    ========================================================== */
 
 .cube-face--front {
-    transform: rotateY(0deg) translateZ(var(--cube-half));
+    transform:
+        rotateY(0deg)
+        translateZ(var(--cube-half));
 }
 
 .cube-face--right {
-    transform: rotateY(90deg) translateZ(var(--cube-half));
+    transform:
+        rotateY(90deg)
+        translateZ(var(--cube-half));
 }
 
 .cube-face--back {
-    transform: rotateY(180deg) translateZ(var(--cube-half));
+    transform:
+        rotateY(180deg)
+        translateZ(var(--cube-half));
 }
 
 .cube-face--left {
-    transform: rotateY(-90deg) translateZ(var(--cube-half));
+    transform:
+        rotateY(-90deg)
+        translateZ(var(--cube-half));
 }
 
 .cube-face--top {
-    transform: rotateX(90deg) translateZ(var(--cube-half));
+    transform:
+        rotateX(90deg)
+        translateZ(var(--cube-half));
 }
 
 .cube-face--bottom {
-    transform: rotateX(-90deg) translateZ(var(--cube-half));
+    transform:
+        rotateX(-90deg)
+        translateZ(var(--cube-half));
 }
 
+
 /* ==========================================================
-   08. SELECTOR DE ÁREA
+   09. SELECTOR DE ÁREA
 
-   Control auxiliar para acceder siempre a HOME, SOLUCIONES
-   y CONTACTO.
-
-   Su apariencia es provisional. Más adelante decidiremos
-   cómo integrarlo con el cubo en la navegación definitiva.
+   Navegación auxiliar situada debajo del cubo.
    ========================================================== */
 
 .section-selector {
@@ -170,6 +198,10 @@ button.cube-face:hover {
     gap: 2rem;
 }
 
+
+/* ==========================================================
+   10. BOTONES DEL SELECTOR
+   ========================================================== */
 
 .section-selector__button {
     position: relative;
@@ -206,7 +238,9 @@ button.cube-face:hover {
 }
 
 
-/* Línea que identifica la sección actualmente abierta */
+/* ==========================================================
+   11. INDICADOR DE SECCIÓN ACTIVA
+   ========================================================== */
 
 .section-selector__button.active::after {
     content: "";
