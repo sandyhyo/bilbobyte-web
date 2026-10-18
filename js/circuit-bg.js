@@ -1,0 +1,328 @@
+/* ==========================================================
+   circuit-bg.js
+   Animación de fondo tipo circuito impreso.
+
+   Adaptada al estilo visual de BilboByte:
+   - Fondo base: --bg-primary (#0b1623)
+   - Trazas: azul marino muy suave, coherente con --bg-soft
+   - Pulsos: azul medio, sin saturar el fondo
+   - Sin elementos dorados/amarillos (ajenos a la identidad)
+   - Opacidad reducida para mantenerse como fondo discreto
+   ========================================================== */
+
+(() => {
+
+    /* ===== CONFIGURACIÓN ===== */
+
+    const CFG = {
+        grid:       14,                          // tamaño de celda (px)
+        traceColor: 'rgba(30, 80, 140, 0.30)',   // trazas: azul marino suave
+        padColor:   'rgba(50, 120, 200, 0.40)',  // pads: azul medio
+        pulseRGB:   '80, 150, 220',              // pulsos: azul claro
+        maxPulses:  4,
+        speed:      [140, 280],                  // px/s
+        tail:       [24, 36],                    // largo de la estela px
+        densityDiv: 9000,
+        cpuSize:    0.22,
+        cpuLabel:   ''                           // sin texto en el chip
+    };
+
+    const wrap   = document.getElementById('circuit-bg');
+    if (!wrap) return;
+
+    const canvas = wrap.querySelector('canvas');
+    const ctx    = canvas.getContext('2d');
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const DIRS = [[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1],[0,-1],[1,-1]];
+    const rand    = (a, b) => a + Math.random() * (b - a);
+    const randInt = (a, b) => Math.floor(rand(a, b + 1));
+
+    let W, H, dpr, traces = [], pulses = [], cpu, layer, raf, last = 0;
+
+
+    /* ----- Utilidades de pista ----- */
+
+    function finalize(pts, endPad = true) {
+        const cum = [0];
+        for (let i = 1; i < pts.length; i++)
+            cum.push(cum[i-1] + Math.hypot(pts[i][0]-pts[i-1][0], pts[i][1]-pts[i-1][1]));
+        return { pts, cum, length: cum[cum.length - 1], endPad };
+    }
+
+    function pointAt(t, dist) {
+        dist = Math.max(0, Math.min(t.length, dist));
+        let i = 1;
+        while (i < t.cum.length - 1 && t.cum[i] < dist) i++;
+        const seg = t.cum[i] - t.cum[i-1] || 1;
+        const k   = (dist - t.cum[i-1]) / seg;
+        return [
+            t.pts[i-1][0] + (t.pts[i][0] - t.pts[i-1][0]) * k,
+            t.pts[i-1][1] + (t.pts[i][1] - t.pts[i-1][1]) * k
+        ];
+    }
+
+
+    /* ----- Pistas aleatorias (45° y 90°) ----- */
+
+    function makeTrace() {
+        const g = CFG.grid, cols = Math.floor(W / g), rows = Math.floor(H / g);
+        let cx = randInt(1, cols - 1), cy = randInt(1, rows - 1);
+        let d  = randInt(0, 7);
+        const pts  = [[cx * g, cy * g]];
+        const segs = randInt(2, 5);
+        for (let s = 0; s < segs; s++) {
+            const len = randInt(3, 12);
+            let moved = 0;
+            for (let i = 0; i < len; i++) {
+                const nx = cx + DIRS[d][0], ny = cy + DIRS[d][1];
+                if (nx < 0 || ny < 0 || nx > cols || ny > rows) break;
+                cx = nx; cy = ny; moved++;
+            }
+            if (moved) pts.push([cx * g, cy * g]);
+            d = (d + (Math.random() < .5 ? 1 : -1) + 8) % 8;
+        }
+        return pts.length < 3 ? null : finalize(pts);
+    }
+
+
+    /* ----- CPU: cuerpo, pines y pistas que salen de él ----- */
+
+    function clipToScreen(pts) {
+        const out = [pts[0]];
+        for (let i = 1; i < pts.length; i++) {
+            const a = out[out.length - 1], b = pts[i];
+            if (b[0] >= 0 && b[0] <= W && b[1] >= 0 && b[1] <= H) { out.push(b); continue; }
+            let t = 1;
+            if (b[0] < 0) t = Math.min(t, (0 - a[0]) / (b[0] - a[0]));
+            if (b[0] > W) t = Math.min(t, (W - a[0]) / (b[0] - a[0]));
+            if (b[1] < 0) t = Math.min(t, (0 - a[1]) / (b[1] - a[1]));
+            if (b[1] > H) t = Math.min(t, (H - a[1]) / (b[1] - a[1]));
+            out.push([a[0] + (b[0]-a[0]) * t, a[1] + (b[1]-a[1]) * t]);
+            return { pts: out, clipped: true };
+        }
+        return { pts: out, clipped: false };
+    }
+
+    function buildCpu() {
+        const g    = CFG.grid;
+        const h    = Math.max(4, Math.min(8, Math.round(Math.min(W, H) * CFG.cpuSize / 2 / g)));
+        const cx   = Math.round(W / 2 / g) * g;
+        const cy   = Math.round(H / 2 / g) * g;
+        const half = h * g;
+        cpu = { cx, cy, half, h, pins: [], traces: [] };
+
+        for (const [ox, oy] of [[0,-1],[1,0],[0,1],[-1,0]]) {
+            const lx = -oy, ly = ox;
+            const s   = randInt(1,3),  m  = randInt(2,5),  L  = randInt(3,14),
+                  m2  = randInt(2,6),  L2 = randInt(2,10), sg2 = Math.random() < .5 ? 1 : -1;
+            for (let k = -(h - 1); k <= h - 1; k++) {
+                const sg = Math.sign(k);
+                const px = cx + ox * half + lx * k * g;
+                const py = cy + oy * half + ly * k * g;
+                cpu.pins.push([px, py]);
+                const P = [[px, py]];
+                const add = (dx, dy, n) => { const l = P[P.length-1]; P.push([l[0]+dx*n*g, l[1]+dy*n*g]); };
+                add(ox, oy, s);
+                add(ox + lx*sg,  oy + ly*sg,  m);
+                add(ox, oy, L);
+                add(ox + lx*sg2, oy + ly*sg2, m2);
+                add(ox, oy, L2);
+                const { pts, clipped } = clipToScreen(P);
+                if (pts.length >= 2) cpu.traces.push(finalize(pts, !clipped));
+            }
+        }
+    }
+
+    function hitsCpu(t) {
+        const lim = cpu.half + CFG.grid * 4;
+        for (let d = 0; d <= t.length; d += 7) {
+            const p = pointAt(t, d);
+            if (Math.abs(p[0] - cpu.cx) < lim && Math.abs(p[1] - cpu.cy) < lim) return true;
+        }
+        return false;
+    }
+
+
+    /* ----- Capa estática: se dibuja una sola vez en un canvas auxiliar ----- */
+
+    function buildStatic() {
+        layer        = document.createElement('canvas');
+        layer.width  = W * dpr;
+        layer.height = H * dpr;
+        const c      = layer.getContext('2d');
+        c.scale(dpr, dpr);
+        c.lineWidth  = 1;
+        c.lineJoin   = 'round';
+
+        const pad = (x, y) => { c.beginPath(); c.arc(x, y, 2.5, 0, 7); c.fill(); };
+
+        /* trazas aleatorias */
+        for (const t of traces) {
+            c.strokeStyle = CFG.traceColor;
+            c.beginPath();
+            t.pts.forEach(([x, y], i) => i ? c.lineTo(x, y) : c.moveTo(x, y));
+            c.stroke();
+            c.fillStyle = CFG.padColor;
+            pad(t.pts[0][0], t.pts[0][1]);
+            if (t.endPad) pad(t.pts[t.pts.length-1][0], t.pts[t.pts.length-1][1]);
+        }
+
+        /* cuerpo del chip */
+        const { cx, cy, half } = cpu;
+        const x0 = cx - half, y0 = cy - half, S = half * 2;
+        const rr = (x, y, w, h, r) => {
+            c.beginPath();
+            c.roundRect ? c.roundRect(x, y, w, h, r) : c.rect(x, y, w, h);
+        };
+
+        /* placa base del chip — usa --bg-secondary para integrarse */
+        rr(x0, y0, S, S, 5);
+        c.fillStyle   = '#0f2033';
+        c.fill();
+        c.strokeStyle = 'rgba(50, 120, 200, 0.45)';
+        c.lineWidth   = 1.5;
+        c.stroke();
+
+        /* muesca de orientación */
+        c.beginPath();
+        c.arc(x0 + 9, y0 + 9, 3, 0, 7);
+        c.strokeStyle = 'rgba(50, 120, 200, 0.35)';
+        c.lineWidth   = 1;
+        c.stroke();
+
+        /* die interno */
+        const ins = CFG.grid * 3;
+        const dx = x0 + ins, dy = y0 + ins, ds = S - ins * 2;
+        c.strokeStyle = 'rgba(80, 150, 220, 0.35)';
+        rr(dx, dy, ds, ds, 3);
+        c.stroke();
+        c.strokeStyle = 'rgba(80, 150, 220, 0.12)';
+        for (let i = 1; i < 4; i++) {
+            c.beginPath();
+            c.moveTo(dx + ds*i/4, dy);
+            c.lineTo(dx + ds*i/4, dy + ds);
+            c.moveTo(dx, dy + ds*i/4);
+            c.lineTo(dx + ds, dy + ds*i/4);
+            c.stroke();
+        }
+
+        /* pines del chip */
+        c.fillStyle = CFG.padColor;
+        for (const [px, py] of cpu.pins) pad(px, py);
+    }
+
+
+    /* ----- Setup ----- */
+
+    function setup() {
+        dpr            = Math.min(window.devicePixelRatio || 1, 2);
+        W              = wrap.clientWidth;
+        H              = wrap.clientHeight;
+        canvas.width   = W * dpr;
+        canvas.height  = H * dpr;
+
+        buildCpu();
+
+        const count = Math.min(200, Math.max(30, Math.round(W * H / CFG.densityDiv)));
+        const rnd   = [];
+        for (let tries = 0; rnd.length < count && tries < count * 20; tries++) {
+            const t = makeTrace();
+            if (t && !hitsCpu(t)) rnd.push(t);
+        }
+        traces = rnd.concat(cpu.traces);
+        buildStatic();
+
+        pulses = [];
+        const n = Math.min(CFG.maxPulses, Math.round(count / 12));
+        for (let i = 0; i < n; i++) pulses.push(newPulse(true));
+        draw(0);
+    }
+
+    function newPulse(initial) {
+        const useCpu = cpu.traces.length && Math.random() < 0.65;
+        const pool   = useCpu ? cpu.traces : traces;
+        const t      = pool[randInt(0, pool.length - 1)];
+        return {
+            t,
+            rev:  useCpu && Math.random() < .5,
+            d:    initial ? -rand(0, 600) : -rand(0, 200),
+            v:    rand(...CFG.speed),
+            tail: rand(...CFG.tail)
+        };
+    }
+
+
+    /* ----- Dibujo ----- */
+
+    function draw(ts) {
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(layer, 0, 0);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        /* respiración suave del die */
+        const ins = CFG.grid * 3, ds = cpu.half * 2 - ins * 2;
+        ctx.fillStyle = `rgba(80,150,220,${0.025 + 0.02 * Math.sin(ts / 1600)})`;
+        ctx.fillRect(cpu.cx - cpu.half + ins, cpu.cy - cpu.half + ins, ds, ds);
+
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.lineCap  = 'round';
+        ctx.lineJoin = 'round';
+
+        for (const p of pulses) {
+            if (p.d < 0) continue;
+            const at = dist => pointAt(p.t, p.rev ? p.t.length - dist : dist);
+            const step = 6, n = Math.ceil(p.tail / step);
+            let prev = at(p.d);
+            for (let i = 1; i <= n; i++) {
+                const dist = p.d - i * step;
+                if (dist < 0 - step) break;
+                const cur = at(dist);
+                const a   = Math.pow(1 - i / n, 1.6);
+                ctx.strokeStyle = `rgba(${CFG.pulseRGB},${a * 0.18})`; ctx.lineWidth = 6;
+                ctx.beginPath(); ctx.moveTo(prev[0], prev[1]); ctx.lineTo(cur[0], cur[1]); ctx.stroke();
+                ctx.strokeStyle = `rgba(${CFG.pulseRGB},${a * 0.80})`; ctx.lineWidth = 1.6;
+                ctx.beginPath(); ctx.moveTo(prev[0], prev[1]); ctx.lineTo(cur[0], cur[1]); ctx.stroke();
+                prev = cur;
+            }
+        }
+
+        ctx.globalCompositeOperation = 'source-over';
+    }
+
+    function frame(ts) {
+        const dt = Math.min((ts - last) / 1000, 0.05); last = ts;
+        for (let i = 0; i < pulses.length; i++) {
+            const p = pulses[i];
+            p.d += p.v * dt;
+            if (p.d - p.tail > p.t.length) pulses[i] = newPulse(false);
+        }
+        draw(ts);
+        raf = requestAnimationFrame(frame);
+    }
+
+    function start() {
+        if (reduceMotion || raf) return;
+        last = performance.now();
+        raf  = requestAnimationFrame(frame);
+    }
+
+    function stop() { cancelAnimationFrame(raf); raf = null; }
+
+
+    /* ----- Eventos ----- */
+
+    let rt;
+    addEventListener('resize', () => {
+        clearTimeout(rt);
+        rt = setTimeout(() => { stop(); setup(); start(); }, 200);
+    });
+    document.addEventListener('visibilitychange', () =>
+        document.hidden ? stop() : start()
+    );
+
+    setup();
+    start();
+
+})();

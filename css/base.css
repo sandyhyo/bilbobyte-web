@@ -45,6 +45,7 @@ html {
     margin: 0;
     padding: 0;
 
+    background-color: var(--bg-primary);
     scroll-behavior: smooth;
 }
 
@@ -55,29 +56,57 @@ body {
 
 
 /* ==========================================================
-   03. CUERPO DE LA WEB
+   03. FONDO ANIMADO Y CUERPO DE LA WEB
 
-   El fondo utiliza varias capas muy suaves para evitar
-   una superficie azul completamente plana.
+   El fondo combina el canvas de circuito con degradados
+   radiales suaves en tonos azules para conservar la identidad
+   y asegurar la máxima legibilidad de los textos.
    ========================================================== */
 
-body {
-    min-height: 100vh;
+#circuit-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
 
     background:
         radial-gradient(
             circle at 75% 20%,
-            rgba(30, 70, 105, 0.22),
-            transparent 38%
+            rgba(30, 70, 105, 0.25),
+            transparent 45%
         ),
         radial-gradient(
             circle at 15% 65%,
-            rgba(19, 48, 75, 0.20),
-            transparent 42%
+            rgba(19, 48, 75, 0.22),
+            transparent 48%
         ),
         var(--bg-primary);
+}
 
-    background-attachment: fixed;
+#circuit-bg canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    opacity: 0.70;
+}
+
+#circuit-bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        ellipse at center,
+        rgba(11, 22, 35, 0.15) 0%,
+        rgba(11, 22, 35, 0.50) 65%,
+        rgba(11, 22, 35, 0.85) 100%
+    );
+    pointer-events: none;
+}
+
+body {
+    min-height: 100vh;
+    background: transparent;
 
     color: var(--text-primary);
 
@@ -91,6 +120,7 @@ body {
 
     -webkit-font-smoothing: antialiased;
 }
+
 
 
 /* ==========================================================
@@ -148,23 +178,30 @@ button {
 /* ==========================================================
    07. TRANSICIÓN DE SALIDA
 
-   Movimiento deliberadamente pequeño para acompañar al
-   cubo sin competir visualmente con él.
+   La sección sale con una leve inclinación en X y retrocede
+   en Z, como si el cubo la empujara hacia el fondo.
    ========================================================== */
 
 .page-section.leaving {
     opacity: 0;
 
-    transform: translateY(8px) scale(0.99);
+    transform:
+        perspective(1100px)
+        rotateX(2.5deg)
+        translateY(14px)
+        translateZ(-22px);
 
     transition:
-        opacity 180ms ease,
-        transform 180ms ease;
+        opacity 210ms cubic-bezier(0.4, 0, 1, 1),
+        transform 210ms cubic-bezier(0.4, 0, 1, 1);
 }
 
 
 /* ==========================================================
    08. TRANSICIÓN DE ENTRADA
+
+   La nueva sección emerge desde el fondo con la inclinación
+   inversa, como si el cubo la trajera al frente.
    ========================================================== */
 
 .page-section.entering {
@@ -172,18 +209,26 @@ button {
 
     opacity: 0;
 
-    transform: translateY(-8px) scale(0.99);
+    transform:
+        perspective(1100px)
+        rotateX(-2.5deg)
+        translateY(-14px)
+        translateZ(-22px);
 }
 
 
 .page-section.entering.entering-active {
     opacity: 1;
 
-    transform: translateY(0) scale(1);
+    transform:
+        perspective(1100px)
+        rotateX(0deg)
+        translateY(0)
+        translateZ(0);
 
     transition:
-        opacity 260ms ease,
-        transform 260ms ease;
+        opacity 300ms ease,
+        transform 300ms cubic-bezier(0.2, 0, 0.1, 1);
 }
 
 
@@ -246,14 +291,42 @@ p {
     font-size: 0.75rem;
     font-weight: 500;
     letter-spacing: 0.12em;
+
+    /*
+     Identity base para evitar que el stacking context cambie
+     sólo en el hover, causando saltos de z-index inesperados.
+    */
+    translate: 0px 0px;
+    rotate: 0deg;
+
+    transition:
+        transform 320ms cubic-bezier(0.2, 0, 0.15, 1),
+        box-shadow 320ms ease,
+        border-color 320ms ease;
+}
+
+
+.photo-placeholder:hover {
+    transform:
+        perspective(900px)
+        rotateY(2.5deg)
+        rotateX(-1.2deg)
+        translateZ(10px);
+
+    border-color: rgba(255, 255, 255, 0.22);
+
+    box-shadow:
+        -10px 16px 48px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 
 /* ==========================================================
    11. ACCESIBILIDAD — MOVIMIENTO REDUCIDO
 
-   Si el sistema operativo solicita reducir animaciones,
-   eliminamos las transiciones principales.
+   Reducción selectiva por elemento en lugar de deshabilitar
+   globalmente: evita que los cortes bruscos resulten más
+   molestos que las propias animaciones.
    ========================================================== */
 
 @media (prefers-reduced-motion: reduce) {
@@ -262,10 +335,39 @@ p {
         scroll-behavior: auto;
     }
 
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.01ms !important;
-        transition-duration: 0.01ms !important;
+    /* Secciones: sólo opacidad, sin transforms 3D */
+
+    .page-section.leaving {
+        transform: none;
+        transition: opacity 150ms ease;
     }
+
+    .page-section.entering {
+        transform: none;
+    }
+
+    .page-section.entering.entering-active {
+        transform: none;
+        transition: opacity 180ms ease;
+    }
+
+
+    /* Placeholders: sin hover 3D */
+
+    .photo-placeholder {
+        transition: border-color 150ms ease;
+    }
+
+    .photo-placeholder:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+
+    /* Cubo: sin animación en el giro de navegación */
+
+    .navigation-cube {
+        transition: none;
+    }
+
 }

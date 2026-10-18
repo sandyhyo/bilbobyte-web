@@ -1,0 +1,297 @@
+/* ==========================================================
+   01. CONTACTO — CONFIGURACIÓN GENERAL
+   ========================================================== */
+
+#contact {
+    padding-bottom: var(--section-space);
+}
+
+
+/* ==========================================================
+   02. ENCABEZADO DE CONTACTO
+   ========================================================== */
+
+.contact-header {
+    padding:
+        clamp(4rem, 10vh, 8rem)
+        0
+        var(--block-gap);
+
+    max-width: 700px;
+}
+
+
+.contact-header h2 {
+    margin-bottom: 1.5rem;
+
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 600;
+
+    letter-spacing: -0.025em;
+}
+
+
+.contact-header p {
+    font-size: clamp(1rem, 1.3vw, 1.1rem);
+
+    color: var(--text-secondary);
+}
+
+
+/* ==========================================================
+   03. FORMULARIO DE CONTACTO
+
+   Anchura máxima ajustada para una lectura cómoda.
+   ========================================================== */
+
+.contact-form {
+    width: min(100%, 580px);
+}
+
+
+/* ==========================================================
+   04. HONEYPOT ANTI-SPAM
+
+   Campo oculto visualmente para detectar bots.
+   Los bots lo rellenan; los humanos no lo ven.
+   ========================================================== */
+
+.contact-form__honeypot {
+    position: absolute;
+
+    clip-path: inset(50%);
+    overflow: hidden;
+
+    width: 1px;
+    height: 1px;
+
+    margin: -1px;
+    padding: 0;
+
+    border: 0;
+
+    white-space: nowrap;
+}
+
+
+/* ==========================================================
+   05. GRUPO DE CAMPO
+
+   Envuelve label + input/textarea + mensaje de error.
+   ========================================================== */
+
+.contact-form__group {
+    margin-block-end: 1.75rem;
+}
+
+
+/* ==========================================================
+   06. ETIQUETAS
+   ========================================================== */
+
+.contact-form__label {
+    display: block;
+
+    margin-block-end: 0.5rem;
+
+    color: var(--text-secondary);
+
+    font-size: 0.85rem;
+    font-weight: 500;
+
+    letter-spacing: 0.04em;
+
+    cursor: pointer;
+}
+
+
+/* ==========================================================
+   07. CAMPOS DE TEXTO
+
+   El color de borde y el fondo reflejan el sistema de color
+   de la web. El campo activo eleva ligeramente su borde.
+   ========================================================== */
+
+.contact-form__input {
+    display: block;
+
+    width: 100%;
+
+    padding: 0.85rem 1rem;
+    min-height: 48px;
+
+    border: 1px solid var(--border-soft);
+    border-radius: 4px;
+
+    background: rgba(255, 255, 255, 0.04);
+
+    color: var(--text-primary);
+
+    font-size: 1rem;
+    line-height: 1.5;
+
+    transition:
+        border-color 180ms ease,
+        background 180ms ease;
+
+    appearance: none;
+}
+
+
+.contact-form__input:focus {
+    outline: none;
+
+    border-color: rgba(255, 255, 255, 0.45);
+    background: rgba(255, 255, 255, 0.07);
+}
+
+
+/* Validación visual: :user-invalid asegura que el error
+   sólo aparece después de que el usuario haya interactuado */
+
+.contact-form__input:user-invalid {
+    border-color: rgba(255, 100, 100, 0.55);
+}
+
+/* Fallback para navegadores sin :user-invalid */
+@supports not selector(:user-invalid) {
+    .contact-form__input.input--touched:invalid {
+        border-color: rgba(255, 100, 100, 0.55);
+    }
+}
+
+.contact-form__input::placeholder {
+    color: var(--text-muted);
+    opacity: 0.6;
+}
+
+
+/* ==========================================================
+   08. ÁREA DE TEXTO
+   ========================================================== */
+
+.contact-form__textarea {
+    resize: vertical;
+    min-height: 160px;
+}
+
+
+/* ==========================================================
+   09. MENSAJES DE ERROR INLINE
+   ========================================================== */
+
+.contact-form__error {
+    display: block;
+
+    margin-block-start: 0.4rem;
+
+    color: rgba(255, 120, 100, 0.9);
+
+    font-size: 0.82rem;
+
+    min-height: 1.2em;
+}
+
+
+/* ==========================================================
+   10. PIE DEL FORMULARIO
+
+   Alinea el botón y el mensaje de estado.
+   ========================================================== */
+
+.contact-form__footer {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 1.5rem;
+
+    margin-block-start: 0.5rem;
+}
+
+
+/* ==========================================================
+   11. BOTÓN DE ENVÍO
+   ========================================================== */
+
+.contact-form__submit {
+    padding: 0.85rem 2.25rem;
+    min-height: 48px;
+
+    border: 1px solid var(--border-soft);
+    border-radius: 4px;
+
+    background: transparent;
+
+    color: var(--text-primary);
+
+    font-size: 0.9rem;
+    font-weight: 500;
+
+    letter-spacing: 0.06em;
+
+    cursor: pointer;
+
+    transition:
+        background 200ms ease,
+        border-color 200ms ease;
+}
+
+
+.contact-form__submit:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+
+.contact-form__submit:active {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+
+.contact-form__submit:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+
+/* ==========================================================
+   12. ESTADO DEL FORMULARIO
+
+   Mensaje de confirmación o error de envío.
+   ========================================================== */
+
+.contact-form__status {
+    margin: 0;
+
+    font-size: 0.9rem;
+
+    color: var(--text-muted);
+}
+
+
+.contact-form__status--success {
+    color: rgba(100, 210, 140, 0.9);
+}
+
+
+.contact-form__status--error {
+    color: rgba(255, 120, 100, 0.9);
+}
+
+
+/* ==========================================================
+   13. MÓVIL
+   ========================================================== */
+
+@media (max-width: 600px) {
+
+    .contact-header {
+        padding-top: 3rem;
+    }
+
+    .contact-form__footer {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

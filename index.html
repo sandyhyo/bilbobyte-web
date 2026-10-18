@@ -1,385 +1,906 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- SEO y Metadatos -->
-  <title>BilboByte | Infraestructura para tu negocio</title>
-  <meta name="description" content="BilboByte: Soluciones de código abierto, infraestructura propia (Engine Room Bilbao Connect, CORE, Vault, Suite) y fabricación 3D de precisión (Engine Room Bilbao Print) en Bilbao y Bizkaia.">
-  <meta name="keywords" content="BilboByte, Engine Room Bilbao Connect, Engine Room Bilbao CORE, Engine Room Bilbao Vault, Engine Room Bilbao Suite, Engine Room Bilbao Print, código abierto Bilbao, impresión 3D Bilbao, soporte informático Bizkaia">
-  <meta name="author" content="BilboByte">
-  <meta name="theme-color" content="#0b132b">
+    <!-- =====================================================
+         01. CONFIGURACIÓN DEL DOCUMENTO
+         ===================================================== -->
 
-  <!-- Open Graph -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://bilbobyte.es/">
-  <meta property="og:title" content="BilboByte | Soluciones Engine Room Bilbao & Impresión 3D">
-  <meta property="og:description" content="Infraestructura invisible para que tu negocio avance. Código abierto e impresión 3D profesional.">
-  <meta property="og:locale" content="es_ES">
+    <meta charset="UTF-8">
 
-  <!-- Tipografía Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
-  <!-- Hoja de Estilos CSS -->
-  <link rel="stylesheet" href="css/styles.css">
+    <title>BilboByte</title>
+
+
+    <!-- =====================================================
+         02. TIPOGRAFÍA
+
+         IBM Plex Sans será la familia principal de BilboByte.
+         De momento se carga desde Google Fonts.
+
+         Más adelante podremos alojarla localmente si
+         preferimos no depender de un recurso externo.
+         ===================================================== -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+
+    <!-- =====================================================
+         03. HOJAS DE ESTILO
+
+         base.css:
+         estructura general, tipografía y elementos comunes.
+
+         cube.css:
+         navegación principal tridimensional.
+
+         home.css:
+         composición específica de HOME.
+
+         solutions.css:
+         sección SOLUCIONES y navegador de productos.
+
+         contact.css:
+         sección CONTACTO y formulario.
+         ===================================================== -->
+
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/cube.css">
+    <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="css/solutions.css">
+    <link rel="stylesheet" href="css/contact.css">
+
 </head>
+
 
 <body>
 
-  <!-- ====================================================================
-       01. CABECERA Y NAVEGACIÓN
-       ==================================================================== -->
-  <header class="site-header" id="header">
-    <div class="container header-container">
-      
-      <!-- Logotipo -->
-      <a href="#hero" class="logo" aria-label="BilboByte - Inicio">
-        <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <rect width="40" height="40" rx="10" fill="#0B132B"/>
-          <path d="M20 7L32 14V28L20 35L8 28V14L20 7Z" stroke="#334155" stroke-width="1.5"/>
-          <path d="M20 7L32 14L20 21L8 14L20 7Z" fill="#F97316"/>
-          <path d="M8 14L20 21V35L8 28V14Z" fill="#0284C7"/>
-          <circle cx="20" cy="21" r="2.5" fill="#FFFFFF"/>
-        </svg>
-        <span class="logo-text">
-          <span class="logo-title">Bilbo<span class="logo-highlight">Byte</span></span>
-          <span class="logo-sub">Open-Source & 3D Lab</span>
-        </span>
-      </a>
+    <!-- =====================================================
+         FONDO ANIMADO — CIRCUITO
 
-      <!-- Menú de Navegación -->
-      <nav class="nav-menu" id="nav-menu" aria-label="Navegación principal">
-        <a href="#presentacion" class="nav-link">Presentación</a>
-        <a href="#servicios" class="nav-link">Soluciones Engine Room Bilbao</a>
-        <a href="#portafolio" class="nav-link">Portafolio</a>
-        <a href="#testimonios" class="nav-link">Opiniones</a>
-        <a href="#proceso" class="nav-link">Cómo Trabajamos</a>
-        <a href="#faq" class="nav-link">FAQ</a>
-        <a href="#contacto" class="nav-link">Contacto</a>
-      </nav>
+         Permanece fijo detrás de todo el contenido.
+         El canvas se gestiona íntegramente desde circuit-bg.js.
+         ===================================================== -->
 
-      <!-- Botón de Cabecera -->
-      <div class="header-actions">
-        <a href="https://api.whatsapp.com/send/?phone=34657690106&text=Hola+BilboByte%2C+quisiera+consultar+sobre+vuestras+soluciones.&type=phone_number&app_absent=0" 
-           class="btn btn-whatsapp btn-sm btn-quote-desktop" 
-           target="_blank" 
-           rel="noopener noreferrer"
-           aria-label="Contactar por WhatsApp">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M12.031 2C6.495 2 2 6.502 2 12.046c0 1.954.558 3.784 1.527 5.341L2.2 22l4.802-1.263A9.972 9.972 0 0 0 12.031 22C17.568 22 22 17.5 22 12.046 22 6.502 17.568 2 12.031 2zm5.727 14.195c-.244.686-1.218 1.258-1.748 1.341-.482.076-1.109.11-3.23-.766-2.55-1.053-4.18-3.666-4.307-3.834-.123-.169-1.03-1.373-1.03-2.618 0-1.246.65-1.859.882-2.112.232-.254.507-.318.675-.318.169 0 .338.003.486.012.157.01.365-.059.57.433.211.507.72 1.758.783 1.885.063.127.106.275.021.444-.084.169-.127.275-.254.423-.127.148-.266.331-.38.444-.127.127-.26.265-.112.518.148.254.658 1.085 1.411 1.757.969.865 1.785 1.134 2.039 1.26.254.127.402.106.55-.063.148-.169.635-.74 1.058-1.32.296-.407.592-.343.994-.194.402.148 2.548 1.202 2.984 1.42.437.218.728.327.834.508.106.18.106 1.047-.138 1.733z"/>
-          </svg>
-          <span>WhatsApp</span>
-        </a>
+    <div id="circuit-bg" aria-hidden="true"><canvas></canvas></div>
 
-        <!-- Botón Hamburguesa Móvil -->
-        <button class="mobile-nav-toggle" id="mobile-nav-toggle" aria-expanded="false" aria-label="Abrir menú" aria-controls="nav-menu">
-          <span></span><span></span><span></span>
-        </button>
-      </div>
 
-    </div>
-  </header>
+    <!-- =====================================================
+         04. CABECERA / NAVEGACIÓN PRINCIPAL
 
-  <main id="main-content">
+         El cubo representa las tres áreas principales:
 
-    <!-- ==================================================================
-         02. HERO (PORTADA)
-         ================================================================== -->
-    <section class="section hero" id="hero">
-      <div class="container hero-grid">
-        <div class="hero-content">
-          </div>
+         HOME
+         SOLUCIONES
+         CONTACTO
 
-          <h1 class="hero-title">
-            Infraestructura para que tu <span class="gradient-tech">negocio avance</span>.
-          </h1>
+         Cada destino ocupa dos caras opuestas para mantener
+         opciones navegables en las diferentes orientaciones.
+         ===================================================== -->
 
-          <p class="hero-subtitle">
-            Ayudamos desde clientes particulares a empresas a adquirir progresivamente su propia infraestructura y ganar autonomía, apoyándonos en herramientas open-source maduras y fabricación de piezas 3D.
-          </p>
+    <header class="site-header">
 
-         
+        <nav
+            class="cube-navigation"
+            aria-label="Navegación principal">
 
-          <div class="hero-trust-bar">
-            <div class="trust-item">
-            </div>
-            <div class="trust-item">
-            </div>
-          </div>
-        </div>
 
-        <div class="hero-visual">
-          <div class="hero-card-composite">
-            <div class="composite-split">
-              <div class="split-pillar pillar--tech">
-                <div class="pillar-icon-box">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                    <rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/>
-                  </svg>
+            <!-- =================================================
+                 ESCENA DEL CUBO
+                 ================================================= -->
+
+            <div class="cube-scene">
+
+                <div
+                    class="navigation-cube"
+                    id="navigationCube">
+
+
+                    <!-- HOME — cara frontal -->
+
+                    <button
+                        class="cube-face cube-face--front"
+                        type="button"
+                        data-section="home">
+                        HOME
+                    </button>
+
+
+                    <!-- SOLUCIONES — cara derecha -->
+
+                    <button
+                        class="cube-face cube-face--right"
+                        type="button"
+                        data-section="solutions">
+                        SOLUCIONES
+                    </button>
+
+
+                    <!-- CONTACTO — cara superior -->
+
+                    <button
+                        class="cube-face cube-face--top"
+                        type="button"
+                        data-section="contact">
+                        CONTACTO
+                    </button>
+
+
+                    <!-- SOLUCIONES — cara izquierda -->
+
+                    <button
+                        class="cube-face cube-face--left"
+                        type="button"
+                        data-section="solutions">
+                        SOLUCIONES
+                    </button>
+
+
+                    <!-- HOME — cara trasera -->
+
+                    <button
+                        class="cube-face cube-face--back"
+                        type="button"
+                        data-section="home">
+                        HOME
+                    </button>
+
+
+                    <!-- CONTACTO — cara inferior -->
+
+                    <button
+                        class="cube-face cube-face--bottom"
+                        type="button"
+                        data-section="contact">
+                        CONTACTO
+                    </button>
+
                 </div>
-                <h3 class="pillar-title">Infraestructura TI</h3>
-                <p class="pillar-desc">Engine Room Bilbao Connect · Engine Room Bilbao CORE · Engine Room Bilbao Vault · Engine Room Bilbao Suite</p>
-                <span class="badge badge-tech">Herramientas Maduras</span>
-              </div>
 
-              <div class="split-pillar pillar--maker">
-                <div class="pillar-icon-box">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                    <polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/>
-                  </svg>
+            </div>
+
+
+            <!-- =================================================
+                 SELECTOR PRINCIPAL
+
+                 Se mantiene como apoyo al cubo y garantiza
+                 acceso directo a las tres áreas.
+                 ================================================= -->
+
+            <div class="section-selector">
+
+                <button
+                    type="button"
+                    class="section-selector__button active"
+                    data-section="home">
+                    HOME
+                </button>
+
+                <button
+                    type="button"
+                    class="section-selector__button"
+                    data-section="solutions">
+                    SOLUCIONES
+                </button>
+
+                <button
+                    type="button"
+                    class="section-selector__button"
+                    data-section="contact">
+                    CONTACTO
+                </button>
+
+            </div>
+
+        </nav>
+
+    </header>
+
+
+    <!-- =====================================================
+         05. CONTENIDO PRINCIPAL
+         ===================================================== -->
+
+    <main class="site-content">
+
+
+        <!-- =================================================
+             HOME
+             ================================================= -->
+
+        <section
+            id="home"
+            class="page-section active">
+
+
+            <!-- =============================================
+                 HOME / HERO
+                 ============================================= -->
+
+            <div class="home-hero">
+
+                <div class="home-hero__content">
+
+                    <!--
+                        Aquí incorporaremos posteriormente
+                        el logotipo definitivo.
+                    -->
+
+                    <h1 class="home-hero__title">
+                        BILBOBYTE
+                    </h1>
+
+                    <p class="home-hero__claim">
+                        Infraestructura invisible para que tu negocio avance.
+                    </p>
+
                 </div>
-                <h3 class="pillar-title">Engine Room Bilbao Print</h3>
-                <p class="pillar-desc">Impresión 3D, prototipos, pequeñas series y NFC.</p>
-                <span class="badge badge-maker">De la idea al objeto</span>
-              </div>
+
             </div>
 
-            <div class="composite-footer-badge">
-              <span>BilboByte Laboratorio</span>
-              <div class="badge-status">
-                <span>Atención disponible</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- ==================================================================
-         03. PRESENTACIÓN (CÓMO NACE BILBOBYTE Y OBJETIVOS)
-         ================================================================== -->
-    <section class="section about-section" id="presentacion">
-      <div class="container" id="presentacion-content">
-        <!-- Renderizado dinámicamente por js/render.js desde content/sobre-mi.json -->
-      </div>
-    </section>
+            <!-- =============================================
+                 HOME / PRESENTACIÓN
+                 ============================================= -->
 
-    <!-- ==================================================================
-         04. PRODUCTOS Y SOLUCIONES Engine Room Bilbao
-         ================================================================== -->
-    <section class="section services-section" id="servicios">
-      <div class="container" id="servicios-container">
-        <!-- Renderizado dinámicamente por js/render.js desde content/servicios.json -->
-      </div>
-    </section>
+            <div class="home-block home-block--presentation">
 
-    <!-- ==================================================================
-         05. PORTAFOLIO / RESULTADOS
-         ================================================================== -->
-    <section class="section portfolio-section" id="portafolio">
-      <div class="container">
-        <header class="section-header">
-          <span class="section-kicker section-kicker--neutral">Casos de Éxito</span>
-          <h2 class="section-title">Resultados reales para necesidades reales</h2>
-          <p class="section-description">
-            Casos prácticos de aplicación en infraestructura de datos, optimización y fabricación aditiva.
-          </p>
-        </header>
+                <div class="home-block__text">
 
-        <div class="portfolio-filters" role="group" aria-label="Filtro de portafolio">
-          <button type="button" class="filter-btn active" data-filter="all">Todos los Trabajos</button>
-          <button type="button" class="filter-btn" data-filter="maker">Engine Room Bilbao Print (3D)</button>
-          <button type="button" class="filter-btn" data-filter="tech">Soluciones TI (Redes / Servidores)</button>
-        </div>
+                    <p>
+                        BilboByte nace con la voluntad de dar visibilidad al alcance que ofrecen las tecnologías de código abierto frente a los productos tradicionales del sector tecnológico.
+                    </p>
 
-        <div class="portfolio-grid" id="portfolio-grid">
-          <!-- Renderizado dinámicamente por js/render.js desde content/proyectos.json -->
-        </div>
-      </div>
-    </section>
+                    <p>
+                        Tras años trabajando con algunas de ellas, hemos podido ver cómo han evolucionado y madurado, hasta convertirse en herramientas capaces de ofrecer soluciones sólidas y profesionales. Por desgracia, muchas veces pasan desapercibidas fuera de los sectores especializados.
+                    </p>
 
-    <!-- ==================================================================
-         06. TESTIMONIOS
-         ================================================================== -->
-    <section class="section testimonials-section" id="testimonios">
-      <div class="container">
-        <header class="section-header">
-          <span class="section-kicker section-kicker--neutral">Opiniones</span>
-          <h2 class="section-title">La experiencia de quienes confían en BilboByte</h2>
-        </header>
-        <div class="testimonials-grid" id="testimonials-grid">
-          <!-- Renderizado dinámicamente por js/render.js desde content/testimonios.json -->
-        </div>
-      </div>
-    </section>
+                    <p>
+                        Por eso queremos brindar su acceso a pequeñas y medianas empresas que buscan mejorar su infraestructura, sin asumir necesariamente los elevados costes normalmente asociados a ese tipo de soluciones.
+                    </p>
 
-    <!-- ==================================================================
-         07. CÓMO TRABAJAMOS (PROCESO)
-         ================================================================== -->
-    <section class="section process-section" id="proceso">
-      <div class="container">
-        <header class="section-header">
-          <span class="section-kicker section-kicker--neutral">Metodología</span>
-          <h2 class="section-title">De tu necesidad a la solución operativa en 4 pasos</h2>
-        </header>
-        <div class="process-grid" id="process-grid">
-          <!-- Renderizado dinámicamente por js/render.js desde content/proceso.json -->
-        </div>
-      </div>
-    </section>
+                    <p>
+                        Partiendo del estudio de las necesidades derivadas de cada proyecto, nos proponemos buscar una solución ajustada, seleccionando las herramientas adecuadas y proporcionando tanto el equipamiento necesario para su implantación, como el soporte para mantenerla. Apostando por un modelo que permita al cliente adquirir progresivamente su propia infraestructura y ganar autonomía sobre ella.
+                    </p>
 
-    <!-- ==================================================================
-         08. PREGUNTAS FRECUENTES (FAQ)
-         ================================================================== -->
-    <section class="section faq-section" id="faq">
-      <div class="container container-narrow">
-        <header class="section-header">
-          <span class="section-kicker section-kicker--neutral">Dudas Frecuentes</span>
-          <h2 class="section-title">Preguntas Frecuentes</h2>
-        </header>
-        <div class="faq-accordion-group" id="faq-accordion">
-          <!-- Renderizado dinámicamente por js/render.js desde content/faq.json -->
-        </div>
-      </div>
-    </section>
+                </div>
 
-    <!-- ==================================================================
-         09. CONTACTO (SEGÚN TEXTO DEL DOCUMENTO)
-         ================================================================== -->
-    <section class="section contact-section" id="contacto">
-      <div class="container contact-grid">
-        <div class="contact-info-col">
-          <div>
-            <span class="section-kicker section-kicker--neutral">Contáctanos</span>
-            <h2 class="section-title">¿Hablamos?</h2>
-            <p class="section-description">
-              Si tienes alguna duda, quieres ampliar la información sobre nuestras soluciones o tienes un proyecto en mente, ponte en contacto con nosotros. Cuéntanos qué necesitas y estudiaremos cómo podemos ayudarte.
-            </p>
-          </div>
 
-          <div class="contact-card-highlight">
-            <a href="https://wa.me/34657690106?text=Hola%20BilboByte%2C%20quisiera%20hacer%20una%20consulta." 
-               class="contact-method contact-method--whatsapp" target="_blank" rel="noopener noreferrer">
-              <div class="contact-method-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                  <path d="M12.031 2C6.495 2 2 6.502 2 12.046c0 1.954.558 3.784 1.527 5.341L2.2 22l4.802-1.263A9.972 9.972 0 0 0 12.031 22C17.568 22 22 17.5 22 12.046 22 6.502 17.568 2 12.031 2zm5.727 14.195c-.244.686-1.218 1.258-1.748 1.341-.482.076-1.109.11-3.23-.766-2.55-1.053-4.18-3.666-4.307-3.834-.123-.169-1.03-1.373-1.03-2.618 0-1.246.65-1.859.882-2.112.232-.254.507-.318.675-.318.169 0 .338.003.486.012.157.01.365-.059.57.433.211.507.72 1.758.783 1.885.063.127.106.275.021.444-.084.169-.127.275-.254.423-.127.148-.266.331-.38.444-.127.127-.26.265-.112.518.148.254.658 1.085 1.411 1.757.969.865 1.785 1.134 2.039 1.26.254.127.402.106.55-.063.148-.169.635-.74 1.058-1.32.296-.407.592-.343.994-.194.402.148 2.548 1.202 2.984 1.42.437.218.728.327.834.508.106.18.106 1.047-.138 1.733z"/>
-                </svg>
-              </div>
-              <div>
-                <span class="contact-method-title">WhatsApp Directo</span>
-                <span class="contact-method-value">+34 600 000 000 [EDITAR]</span>
-              </div>
-            </a>
+                <!-- =========================================
+                     FOTO PENDIENTE — PRESENTACIÓN
 
-            <a href="mailto:contacto@bilbobyte.es" class="contact-method contact-method--email">
-              <div class="contact-method-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                  <polyline points="22,6 12,13 2,6"></polyline>
-                </svg>
-              </div>
-              <div>
-                <span class="contact-method-title">Correo Electrónico</span>
-                <span class="contact-method-value">contacto@bilbobyte.es [EDITAR]</span>
-              </div>
-            </a>
-          </div>
-        </div>
+                     Idea prevista:
+                     Andoni + Jose trabajando en un entorno
+                     real, sin necesidad de mostrar rostros.
 
-        <!-- Formulario Simplificado según el Documento -->
-        <div class="contact-form-card">
-          <form id="contact-form" class="contact-form" novalidate>
-            <!-- Casilla Honeypot Anti-Spam -->
-            <div class="form-honeypot" aria-hidden="true">
-              <input type="text" name="botcheck" tabindex="-1" autocomplete="off">
+                     El placeholder nos permitirá determinar
+                     posteriormente encuadre y proporción.
+                     ========================================= -->
+
+                <div
+                    class="photo-placeholder"
+                    aria-hidden="true">
+
+                    <span>
+                        FOTO · PRESENTACIÓN
+                    </span>
+
+                </div>
+
             </div>
 
-            <div class="form-group">
-              <label for="form-nombre" class="form-label">Nombre <span class="required" aria-hidden="true">*</span></label>
-              <input type="text" id="form-nombre" name="nombre" class="form-input" placeholder="Tu nombre o empresa" required autocomplete="name">
+
+            <!-- =============================================
+                 HOME / PRODUCTOS
+                 ============================================= -->
+
+            <div class="home-block home-block--products">
+
+                <div class="home-block__text">
+
+                    <h2>
+                        Soluciones
+                    </h2>
+
+                    <p>
+                        Después de analizar las áreas que habitualmente requieren más atención en el desarrollo tecnológico de una empresa, hemos preparado una serie de propuestas orientadas a cubrir sus principales necesidades y facilitar su crecimiento. Todas pensadas para acompañar su evolución, proteger su información, materializar sus ideas y perdurar a largo plazo.
+                    </p>
+
+                </div>
+
             </div>
 
-            <div class="form-group">
-              <label for="form-email" class="form-label">Correo electrónico <span class="required" aria-hidden="true">*</span></label>
-              <input type="email" id="form-email" name="email" class="form-input" placeholder="tu@correo.com" required autocomplete="email">
+
+            <!-- =============================================
+                 HOME / SELECTOR DE SOLUCIONES
+
+                 Más adelante tendrá interacción propia.
+                 Seleccionar una solución llevará a la cara
+                 SOLUCIONES y abrirá directamente la elegida.
+                 ============================================= -->
+
+            <nav
+                class="home-solutions"
+                aria-label="Soluciones BilboByte">
+
+                <button
+                    type="button"
+                    data-product="connect">
+                    CONNECT
+                </button>
+
+                <button
+                    type="button"
+                    data-product="core">
+                    CORE
+                </button>
+
+                <button
+                    type="button"
+                    data-product="vault">
+                    VAULT
+                </button>
+
+                <button
+                    type="button"
+                    data-product="suite">
+                    SUITE
+                </button>
+
+                <button
+                    type="button"
+                    data-product="print">
+                    PRINT
+                </button>
+
+            </nav>
+
+        </section>
+
+
+        <!-- =================================================
+             SOLUCIONES
+
+             Navegador horizontal entre los cinco productos.
+             El panel activo se controla por JS mediante
+             data-product y la clase .product--active.
+             ================================================= -->
+
+        <section
+            id="solutions"
+            class="page-section">
+
+
+            <!-- =============================================
+                 SOLUCIONES / ENCABEZADO + INTRO
+                 ============================================= -->
+
+            <div class="solutions-header">
+
+                <div class="solutions-header__text">
+
+                    <h2>
+                        Soluciones
+                    </h2>
+
+                    <p>
+                        Después de analizar las áreas que habitualmente requieren más atención en el desarrollo tecnológico de una empresa, hemos preparado una serie de propuestas orientadas a cubrir sus principales necesidades y facilitar su crecimiento. Todas pensadas para acompañar su evolución, proteger su información, materializar sus ideas y perdurar a largo plazo.
+                    </p>
+
+                </div>
+
             </div>
 
-            <div class="form-group">
-              <label for="form-mensaje" class="form-label">Mensaje <span class="required" aria-hidden="true">*</span></label>
-              <textarea id="form-mensaje" name="mensaje" class="form-textarea" placeholder="Cuéntanos qué necesitas..." required rows="4"></textarea>
+
+            <!-- =============================================
+                 SOLUCIONES / NAVEGADOR DE PRODUCTOS
+
+                 Pestañas horizontales que seleccionan el
+                 producto activo dentro de SOLUCIONES.
+                 ============================================= -->
+
+            <nav
+                class="product-nav"
+                aria-label="Productos BilboByte">
+
+                <button
+                    type="button"
+                    class="product-nav__button product-nav__button--active"
+                    data-product="connect"
+                    aria-current="true">
+                    CONNECT
+                </button>
+
+                <button
+                    type="button"
+                    class="product-nav__button"
+                    data-product="core">
+                    CORE
+                </button>
+
+                <button
+                    type="button"
+                    class="product-nav__button"
+                    data-product="vault">
+                    VAULT
+                </button>
+
+                <button
+                    type="button"
+                    class="product-nav__button"
+                    data-product="suite">
+                    SUITE
+                </button>
+
+                <button
+                    type="button"
+                    class="product-nav__button"
+                    data-product="print">
+                    PRINT
+                </button>
+
+            </nav>
+
+
+            <!-- =============================================
+                 SOLUCIONES / PANELES DE PRODUCTO
+                 ============================================= -->
+
+            <div class="product-panels">
+
+
+                <!-- =========================================
+                     ERBConnect
+                     ========================================= -->
+
+                <article
+                    id="product-connect"
+                    class="product-panel product--active"
+                    aria-label="ERBConnect">
+
+                    <div class="product-panel__body">
+
+                        <div class="product-panel__text">
+
+                            <h3 class="product-panel__name">
+                                <span class="product-panel__prefix">ERB</span>Connect
+                            </h3>
+
+                            <p class="product-panel__tagline">
+                                Todo comienza por estar conectados
+                            </p>
+
+                            <p>
+                                La clave para que la información fluya por la empresa, parte de una buena conectividad. Nos encargamos de crear una red estable, organizada y adaptada a tu forma de trabajo.
+                            </p>
+
+                            <p>
+                                Desde la conexión de los equipos a la red, hasta la posibilidad de separar puestos de trabajo, dispositivos o servicios según sus necesidades, todo parte de una buena planificación. Esto permite mantener cada elemento comunicado con aquello que necesita y aislado del resto cuando sea conveniente.
+                            </p>
+
+                            <p>
+                                Además, podemos proporcionar acceso remoto a los recursos de la empresa, permitiendo trabajar con ellos desde fuera de forma segura y controlada. Todo ello mediante una solución sencilla y centralizada, preparada para crecer junto a la empresa allí donde lo necesite.
+                            </p>
+
+                            <p>
+                                Nos encargamos de la instalación y configuración del equipamiento, además de proporcionar asistencia y soporte para mantener la red siempre operativa y preparada para evolucionar junto a tu negocio.
+                            </p>
+
+                        </div>
+
+                        <div
+                            class="photo-placeholder"
+                            aria-hidden="true">
+                            <span>FOTO · CONNECT</span>
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- =========================================
+                     ERBCore
+                     ========================================= -->
+
+                <article
+                    id="product-core"
+                    class="product-panel"
+                    aria-label="ERBCore">
+
+                    <div class="product-panel__body">
+
+                        <div class="product-panel__text">
+
+                            <h3 class="product-panel__name">
+                                <span class="product-panel__prefix">ERB</span>Core
+                            </h3>
+
+                            <p class="product-panel__tagline">
+                                Desata el potencial a tu alcance
+                            </p>
+
+                            <p>
+                                No siempre es necesario disponer de un equipo diferente para cada tarea. Una sola máquina puede hacer mucho más de lo que parece. ERB CORE permite aprovechar al máximo sus recursos, dividiéndolos entre diferentes entornos independientes, capaces de asumir distintas funciones.
+                            </p>
+
+                            <p>
+                                De esta manera una misma infraestructura puede alojar diferentes aplicaciones, herramientas y servicios simultáneamente, aprovechando su capacidad de forma eficiente y evitando dedicar necesariamente un equipo físico a cada tarea.
+                            </p>
+
+                            <p>
+                                Cada entorno puede adaptarse a sus propias necesidades, recibiendo los recursos necesarios y permitiendo incorporar nuevos servicios a medida que la empresa evoluciona. Así, la infraestructura puede crecer y redistribuir su capacidad según las necesidades de cada momento, manteniendo sus diferentes funciones organizadas e independientes entre sí.
+                            </p>
+
+                            <p>
+                                Nos encargamos de su instalación, configuración y monitorización, incorporando además sistemas de copia y recuperación que ayuden a restablecer los servicios ante posibles incidencias, junto con la asistencia y soporte necesarios para mantener la infraestructura operativa.
+                            </p>
+
+                        </div>
+
+                        <div
+                            class="photo-placeholder"
+                            aria-hidden="true">
+                            <span>FOTO · CORE</span>
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- =========================================
+                     ERBVault
+                     ========================================= -->
+
+                <article
+                    id="product-vault"
+                    class="product-panel"
+                    aria-label="ERBVault">
+
+                    <div class="product-panel__body">
+
+                        <div class="product-panel__text">
+
+                            <h3 class="product-panel__name">
+                                <span class="product-panel__prefix">ERB</span>Vault
+                            </h3>
+
+                            <p class="product-panel__tagline">
+                                Porque guardar no es lo mismo que proteger
+                            </p>
+
+                            <p>
+                                La información relevante de una empresa puede terminar repartida entre diferentes ordenadores, dispositivos y ubicaciones, dificultando tanto su acceso como su protección. ERB VAULT permite centralizar la gestión de archivos y documentos en un espacio común, organizado y accesible para quienes los necesitan.
+                            </p>
+
+                            <p>
+                                Mediante carpetas y recursos compartidos, es posible organizar la información por usuarios, departamentos o proyectos, estableciendo diferentes permisos y niveles de acceso. Al mismo tiempo, incorporamos medidas de redundancia destinadas a mantener los datos disponibles en situaciones imprevistas.
+                            </p>
+
+                            <p>
+                                Pero almacenar la información de forma segura no sustituye a una copia de seguridad. Por eso, ERB VAULT puede incorporar sistemas de copia y recuperación independientes, destinados a proteger los datos frente a averías, borrados accidentales u otras incidencias.
+                            </p>
+
+                            <p>
+                                Nos encargamos de la instalación, configuración y supervisión del equipamiento, además de proporcionar asistencia y soporte para mantener protegida una de las partes más importantes de cualquier negocio: su información.
+                            </p>
+
+                        </div>
+
+                        <div
+                            class="photo-placeholder"
+                            aria-hidden="true">
+                            <span>FOTO · VAULT</span>
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- =========================================
+                     ERBSuite
+                     ========================================= -->
+
+                <article
+                    id="product-suite"
+                    class="product-panel"
+                    aria-label="ERBSuite">
+
+                    <div class="product-panel__body">
+
+                        <div class="product-panel__text">
+
+                            <h3 class="product-panel__name">
+                                <span class="product-panel__prefix">ERB</span>Suite
+                            </h3>
+
+                            <p class="product-panel__tagline">
+                                Tu trabajo, simplificado y siempre a mano
+                            </p>
+
+                            <p>
+                                Gestionar un negocio muchas veces implica trabajar cada día con información, contactos, citas, documentos y trabajos realizados, repartiendo la gestión entre diferentes aplicaciones, herramientas y dispositivos. ERB SUITE sirve como un puente hacia todos ellos, ofreciendo un acceso común a las herramientas y la información que necesitas.
+                            </p>
+
+                            <p>
+                                Desde una misma aplicación puedes consultar y gestionar contactos, organizar citas y calendarios, acceder a documentos o resolver parte del papeleo asociado a cada cliente, facilitando además su envío a través de canales de mensajería, agilizando el contacto.
+                            </p>
+
+                            <p>
+                                El ordenador o el móvil se convierten en una puerta de acceso a la información. Los datos permanecen centralizados donde decidas instalar el equipo y puedes acceder a ellos cuando los necesites, sin necesidad de llevarlos contigo. ERB SUITE puede además incorporar nuevas funciones e integraciones a medida que cambien tus necesidades, construyendo un entorno de trabajo que evoluciona junto a tu negocio.
+                            </p>
+
+                            <p>
+                                Nos encargamos de preparar, configurar y adaptar el entorno a las necesidades de tu actividad, integrando las herramientas necesarias para facilitar el trabajo diario. Además, proporcionamos asistencia y soporte para mantenerlo operativo y adaptarlo cuando sea necesario.
+                            </p>
+
+                        </div>
+
+                        <div
+                            class="photo-placeholder"
+                            aria-hidden="true">
+                            <span>FOTO · SUITE</span>
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- =========================================
+                     ERBPrint
+                     ========================================= -->
+
+                <article
+                    id="product-print"
+                    class="product-panel"
+                    aria-label="ERBPrint">
+
+                    <div class="product-panel__body">
+
+                        <div class="product-panel__text">
+
+                            <h3 class="product-panel__name">
+                                <span class="product-panel__prefix">ERB</span>Print
+                            </h3>
+
+                            <p class="product-panel__tagline">
+                                Desde las ideas, a tus manos
+                            </p>
+
+                            <p>
+                                La impresión 3D permite transformar un diseño digital en un objeto físico, ofreciendo una forma flexible de crear prototipos o pequeñas series de piezas. ERB PRINT aprovecha estas posibilidades para desarrollar y fabricar algunos de estos elementos, adaptando cuando sea necesario sus diseños para trasladarlos a la impresión 3D y conservar su esencia en el resultado final.
+                            </p>
+
+                            <p>
+                                Cada proyecto puede partir de un punto diferente. Si ya dispones de un diseño preparado, podemos trabajar sobre él para estudiar su adaptación y convertirlo en una pieza lista para fabricar. Si no lo tienes todavía, podemos trabajar a partir del material disponible para estudiar su vectorización y adaptar el original antes de llevarlo a la impresión 3D. Si únicamente tienes una idea, también puedes consultarnos y estudiaremos sus posibilidades.
+                            </p>
+
+                            <p>
+                                ERB PRINT permite crear desde elementos personalizados de imagen y promoción, como llaveros o identificadores, hasta piezas que incorporen funcionalidades adicionales, como tecnología NFC. La impresión 3D permite de esta manera comprobar el resultado de un diseño y realizar los ajustes necesarios antes de producir nuevas unidades.
+                            </p>
+
+                            <p>
+                                Nos encargamos de estudiar cada proyecto, preparar o adaptar el diseño cuando sea necesario y seleccionar el proceso de fabricación más adecuado para obtener el resultado buscado.
+                            </p>
+
+                        </div>
+
+                        <div
+                            class="photo-placeholder"
+                            aria-hidden="true">
+                            <span>FOTO · PRINT</span>
+                        </div>
+
+                    </div>
+
+                </article>
+
+
             </div>
 
-            <div id="form-status" class="form-status" role="alert" aria-live="polite"></div>
-
-            <button type="submit" class="btn btn-tech btn-lg" id="submit-btn" style="width: 100%;">
-              <span>Enviar</span>
-            </button>
-          </form>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- ====================================================================
-       10. PIE DE PÁGINA
-       ==================================================================== -->
-  <footer class="site-footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-col">
-          <a href="#hero" class="logo" style="color: #ffffff;">
-            <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <rect width="40" height="40" rx="10" fill="#1C2541"/>
-              <path d="M20 7L32 14V28L20 35L8 28V14L20 7Z" stroke="#475569" stroke-width="1.5"/>
-              <path d="M20 7L32 14L20 21L8 14L20 7Z" fill="#F97316"/>
-              <path d="M8 14L20 21V35L8 28V14Z" fill="#0284C7"/>
-              <circle cx="20" cy="21" r="2.5" fill="#FFFFFF"/>
-            </svg>
-            <span class="logo-text">
-              <span class="logo-title">Bilbo<span class="logo-highlight">Byte</span></span>
-              <span class="logo-sub">Open-Source & 3D Lab</span>
-            </span>
-          </a>
-          <p class="footer-brand-desc">
-            Infraestructura invisible para que tu negocio avance. Tecnologías abiertas de alta fiabilidad y fabricación 3D en Bilbao y Bizkaia.
-          </p>
-        </div>
-
-        <div class="footer-col">
-          <h4 class="footer-title">Soluciones Engine Room Bilbao</h4>
-          <ul class="footer-links">
-            <li><a href="#servicios" class="footer-link">Engine Room Bilbao Connect</a></li>
-            <li><a href="#servicios" class="footer-link">Engine Room Bilbao CORE</a></li>
-            <li><a href="#servicios" class="footer-link">Engine Room Bilbao Vault</a></li>
-            <li><a href="#servicios" class="footer-link">Engine Room Bilbao Suite</a></li>
-            <li><a href="#servicios" class="footer-link">Engine Room Bilbao Print (3D)</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-col">
-          <h4 class="footer-title">Contacto</h4>
-          <ul class="footer-links">
-            <li><a href="https://wa.me/34657690106" class="footer-link" target="_blank" rel="noopener noreferrer">WhatsApp: +34 600 000 000</a></li>
-            <li><a href="mailto:santiago31rodriguez10@gmail.com" class="footer-link">santiago31rodriguez10@gmail.com</a></li>
-            <li><span class="footer-link">Bilbao</span></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="footer-bottom">
-        <p>&copy; <span id="current-year">2026</span> BilboByte. Todos los derechos reservados.</p>
-      </div>
-    </div>
-  </footer>
+        </section>
 
 
-  <!-- Fallback noscript -->
-  <noscript>
-    <div style="background-color: #0b132b; color: #ffffff; text-align: center; padding: 1rem; position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000;">
-      Para una experiencia interactiva completa, activa JavaScript en tu navegador. Puedes contactarnos directamente por WhatsApp al +34 600 000 000 o a contacto@bilbobyte.es.
-    </div>
-  </noscript>
+        <!-- =================================================
+             CONTACTO
+             ================================================= -->
 
-  <!-- ====================================================================
-       SCRIPTS JAVASCRIPT SEPARADOS Y MODULARES
-       ==================================================================== -->
-  <script src="js/render.js"></script>
-  <script src="js/main.js"></script>
-  <script src="js/form.js"></script>
+        <section
+            id="contact"
+            class="page-section">
+
+
+            <!-- =============================================
+                 CONTACTO / ENCABEZADO
+                 ============================================= -->
+
+            <div class="contact-header">
+
+                <h2>
+                    ¿Hablamos?
+                </h2>
+
+                <p>
+                    Si tienes alguna duda, quieres ampliar la información sobre nuestras soluciones o tienes un proyecto en mente, ponte en contacto con nosotros. Cuéntanos qué necesitas y estudiaremos cómo podemos ayudarte.
+                </p>
+
+            </div>
+
+
+            <!-- =============================================
+                 CONTACTO / FORMULARIO
+                 ============================================= -->
+
+            <form
+                class="contact-form"
+                id="contactForm"
+                method="post"
+                action="#"
+                novalidate>
+
+
+                <!-- -----------------------------------------
+                     Honeypot anti-spam — campo oculto para
+                     detectar bots que rellenan todo.
+                     Los bots lo rellenan; los humanos no.
+                     ----------------------------------------- -->
+
+                <div
+                    class="contact-form__honeypot"
+                    aria-hidden="true">
+
+                    <label for="website">
+                        No rellenar este campo
+                    </label>
+
+                    <input
+                        type="text"
+                        id="website"
+                        name="website"
+                        tabindex="-1"
+                        autocomplete="off">
+
+                </div>
+
+
+                <!-- -----------------------------------------
+                     Nombre
+                     ----------------------------------------- -->
+
+                <div class="contact-form__group">
+
+                    <label
+                        class="contact-form__label"
+                        for="contact-name">
+                        Nombre
+                    </label>
+
+                    <input
+                        class="contact-form__input"
+                        type="text"
+                        id="contact-name"
+                        name="name"
+                        autocomplete="name"
+                        required
+                        aria-required="true">
+
+                    <span
+                        class="contact-form__error"
+                        id="contact-name-error"
+                        aria-live="polite">
+                    </span>
+
+                </div>
+
+
+                <!-- -----------------------------------------
+                     Correo electrónico
+                     ----------------------------------------- -->
+
+                <div class="contact-form__group">
+
+                    <label
+                        class="contact-form__label"
+                        for="contact-email">
+                        Correo electrónico
+                    </label>
+
+                    <input
+                        class="contact-form__input"
+                        type="email"
+                        id="contact-email"
+                        name="email"
+                        autocomplete="email"
+                        required
+                        aria-required="true">
+
+                    <span
+                        class="contact-form__error"
+                        id="contact-email-error"
+                        aria-live="polite">
+                    </span>
+
+                </div>
+
+
+                <!-- -----------------------------------------
+                     Mensaje
+                     ----------------------------------------- -->
+
+                <div class="contact-form__group">
+
+                    <label
+                        class="contact-form__label"
+                        for="contact-message">
+                        Mensaje
+                    </label>
+
+                    <textarea
+                        class="contact-form__input contact-form__textarea"
+                        id="contact-message"
+                        name="message"
+                        rows="6"
+                        required
+                        aria-required="true">
+                    </textarea>
+
+                    <span
+                        class="contact-form__error"
+                        id="contact-message-error"
+                        aria-live="polite">
+                    </span>
+
+                </div>
+
+
+                <!-- -----------------------------------------
+                     Enviar
+                     ----------------------------------------- -->
+
+                <div class="contact-form__footer">
+
+                    <button
+                        class="contact-form__submit"
+                        type="submit">
+                        Enviar
+                    </button>
+
+                    <p
+                        class="contact-form__status"
+                        id="contact-form-status"
+                        aria-live="polite"
+                        role="status">
+                    </p>
+
+                </div>
+
+            </form>
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         06. JAVASCRIPT
+         ===================================================== -->
+
+    <script src="js/cube.js"></script>
+    <script src="js/solutions.js"></script>
+    <script src="js/circuit-bg.js"></script>
 
 </body>
+
 </html>

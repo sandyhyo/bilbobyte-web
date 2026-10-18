@@ -220,14 +220,21 @@ button.cube-face:hover {
 
     cursor: pointer;
 
+    /* Identity base para evitar saltos de stacking context */
+    translate: 0px;
+
     transition:
         color 200ms ease,
-        transform 200ms ease;
+        transform 220ms cubic-bezier(0.2, 0, 0.15, 1);
 }
 
 
 .section-selector__button:hover {
     color: var(--text-primary);
+
+    transform:
+        perspective(350px)
+        translateZ(5px);
 }
 
 
@@ -256,4 +263,17 @@ button.cube-face:hover {
     background: var(--text-primary);
 
     transform: translateX(-50%);
+}
+
+
+/* ==========================================================
+   12. ACCESIBILIDAD — MOVIMIENTO REDUCIDO
+   ========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .section-selector__button:hover {
+        transform: none;
+    }
+
 }
