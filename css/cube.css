@@ -7,25 +7,19 @@
    --cube-half:
    Mitad exacta del tamaño. Se utiliza para colocar cada cara
    en el espacio 3D.
-
-   --cube-duration:
-   Duración del giro entre secciones.
    ========================================================== */
 
 :root {
     --cube-size: 90px;
     --cube-half: calc(var(--cube-size) / 2);
 
-    --cube-duration: 800ms;
-
-    --cube-border: rgba(255, 255, 255, 0.18);
-    --cube-face-bg: rgba(15, 32, 51, 0.92);
+    --cube-border: rgba(5, 108, 242, 0.40);
+    --cube-face-bg: rgba(2, 40, 89, 0.92);
 }
 
 
 /* ==========================================================
    02. CONTENEDOR DE NAVEGACIÓN
-   Reserva el espacio superior donde vive el cubo.
    ========================================================== */
 
 .cube-navigation {
@@ -33,51 +27,197 @@
     flex-direction: column;
     align-items: center;
 
-    gap: 2.75rem;
+    gap: 2.5rem;
 
-    padding: 3rem 0 2rem;
+    padding: 2.75rem 0 1.5rem;
+
+    transition:
+        gap 280ms cubic-bezier(0.2, 0, 0.1, 1),
+        padding 280ms cubic-bezier(0.2, 0, 0.1, 1),
+        flex-direction 280ms cubic-bezier(0.2, 0, 0.1, 1);
+}
+
+/* Estado flotante al bajar por la página (móvil/sticky) */
+.site-header.is-scrolled .cube-navigation {
+    flex-direction: row;
+    justify-content: center;
+    gap: 2.5rem;
+    padding: 0.65rem 1.5rem;
 }
 
 
 /* ==========================================================
-   03. ESCENA 3D
-
-   perspective determina la profundidad visual.
+   03. ÁREA Y ESCENA 3D / VIEWPORT
+   Basado en el sistema interactivo de dist.
    ========================================================== */
 
+.cube-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    gap: 0.85rem;
+}
+
+.site-header.is-scrolled .cube-area {
+    gap: 0;
+}
+
 .cube-scene {
+    position: relative;
     width: var(--cube-size);
     height: var(--cube-size);
 
     perspective: 800px;
+    perspective-origin: 50% 50%;
+
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+
+    transition: transform 280ms cubic-bezier(0.2, 0, 0.1, 1);
+}
+
+.cube-scene:active,
+.cube-scene.is-dragging,
+.cube-scene.is-dragging * {
+    cursor: grabbing !important;
+}
+
+/* En estado móvil/scrolled el cubo se compacta elegantemente */
+.site-header.is-scrolled .cube-scene {
+    transform: scale(0.60);
+    transform-origin: center center;
 }
 
 
 /* ==========================================================
-   04. CUBO
+   03B. GUÍA ORBITAL Y BADGE INDICATIVO DE ROTACIÓN
+   Indica visualmente la interactividad 3D y libertad de giro.
+   ========================================================== */
 
-   El cubo conserva todas sus caras en espacio 3D.
+.cube-orbit {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 140px;
+    height: 140px;
+    margin-top: -70px;
+    margin-left: -70px;
+    border-radius: 50%;
+    border: 1.5px dashed rgba(5, 108, 242, 0.45);
+    transform: rotateX(72deg) translateZ(-48px);
+    pointer-events: none;
+    box-shadow: 0 0 16px rgba(5, 108, 242, 0.25), inset 0 0 16px rgba(5, 108, 242, 0.15);
+    animation: orbitSpin 14s linear infinite;
+    transition:
+        border-color 300ms ease,
+        box-shadow 300ms ease,
+        opacity 300ms ease;
+    opacity: 0.85;
+}
 
-   La transición se aplica exclusivamente a transform para
-   que cualquier cambio de orientación sea interpolado por
-   el navegador.
+@keyframes orbitSpin {
+    from {
+        transform: rotateX(72deg) translateZ(-48px) rotateZ(0deg);
+    }
+    to {
+        transform: rotateX(72deg) translateZ(-48px) rotateZ(360deg);
+    }
+}
+
+.cube-scene:hover .cube-orbit {
+    border-color: rgba(5, 108, 242, 0.90);
+    box-shadow: 0 0 24px rgba(5, 108, 242, 0.60), inset 0 0 20px rgba(5, 108, 242, 0.35);
+    opacity: 1;
+}
+
+.cube-scene.is-dragging .cube-orbit {
+    border-color: #056CF2;
+    border-style: solid;
+    box-shadow: 0 0 30px rgba(5, 108, 242, 0.80);
+}
+
+.cube-hint {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.38rem;
+
+    padding: 0.22rem 0.55rem;
+    border-radius: 12px;
+
+    background: rgba(5, 108, 242, 0.06);
+    border: 1px solid rgba(5, 108, 242, 0.18);
+
+    color: var(--text-muted);
+    font-size: 0.68rem;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+
+    opacity: 0.65;
+
+    transition:
+        opacity 300ms ease,
+        border-color 300ms ease,
+        color 300ms ease,
+        transform 300ms ease;
+}
+
+.cube-scene:hover ~ .cube-hint {
+    opacity: 0.90;
+    color: var(--text-secondary);
+    border-color: rgba(5, 108, 242, 0.35);
+}
+
+.cube-hint__icon {
+    display: inline-block;
+    color: var(--brand-primary, #056CF2);
+    width: 11px;
+    height: 11px;
+    opacity: 0.85;
+    flex-shrink: 0;
+}
+
+.cube-hint.has-interacted {
+    opacity: 0.35;
+}
+
+.cube-scene:hover ~ .cube-hint.has-interacted {
+    opacity: 0.75;
+}
+
+.cube-scene.is-dragging ~ .cube-hint {
+    opacity: 0;
+    transform: translateY(2px);
+}
+
+.site-header.is-scrolled .cube-hint {
+    display: none;
+    opacity: 0;
+}
+
+
+/* ==========================================================
+   04. CUBO 3D
+   Controlado dinámicamente por el motor de física de JavaScript.
    ========================================================== */
 
 .navigation-cube {
     position: relative;
+    margin: 0 auto;
 
-    width: 100%;
-    height: 100%;
+    width: var(--cube-size);
+    height: var(--cube-size);
 
     transform-style: preserve-3d;
-
-    transform:
-        rotateX(-30deg)
-        rotateY(-28deg);
-
-    transition:
-        transform var(--cube-duration)
-        cubic-bezier(0.45, 0, 0.20, 1);
+    -webkit-transform-style: preserve-3d;
 
     will-change: transform;
 }
@@ -85,8 +225,6 @@
 
 /* ==========================================================
    05. CARAS DEL CUBO
-
-   Todas las caras comparten dimensiones y aspecto.
    ========================================================== */
 
 .cube-face {
@@ -113,81 +251,74 @@
 
     white-space: nowrap;
 
+    cursor: pointer;
+    pointer-events: auto;
+
     backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+
+    transition:
+        background-color 200ms ease,
+        border-color 200ms ease,
+        box-shadow 200ms ease;
 }
-
-
-/* ==========================================================
-   06. AJUSTE ESPECÍFICO — SOLUCIONES
-
-   La palabra SOLUCIONES necesita una escala menor para
-   conservar margen dentro de una cara de 90 px.
-   ========================================================== */
 
 .cube-face[data-section="solutions"] {
     font-size: 0.75rem;
     letter-spacing: 0.01em;
 }
 
+.cube-face:hover {
+    background: rgba(3, 74, 166, 0.96);
+    border-color: rgba(5, 108, 242, 0.85);
+    box-shadow: inset 0 0 14px rgba(5, 108, 242, 0.35);
+}
+
+/* Cara activa resaltada */
+.cube-face.active {
+    border-color: var(--brand-primary, #056CF2);
+    box-shadow: inset 0 0 16px rgba(5, 108, 242, 0.45), 0 0 12px rgba(5, 108, 242, 0.35);
+}
+
 
 /* ==========================================================
-   07. CARAS INTERACTIVAS
+   06. DISPOSICIÓN 3D DE LAS 6 CARAS (Lados 1 a 6)
    ========================================================== */
 
-button.cube-face {
-    cursor: pointer;
-}
-
-button.cube-face:hover {
-    background: rgba(23, 47, 72, 0.98);
-}
-
-
-/* ==========================================================
-   08. POSICIÓN DE LAS SEIS CARAS
-   ========================================================== */
-
-.cube-face--front {
-    transform:
-        rotateY(0deg)
-        translateZ(var(--cube-half));
-}
-
-.cube-face--right {
-    transform:
-        rotateY(90deg)
-        translateZ(var(--cube-half));
-}
-
-.cube-face--back {
-    transform:
-        rotateY(180deg)
-        translateZ(var(--cube-half));
-}
-
-.cube-face--left {
-    transform:
-        rotateY(-90deg)
-        translateZ(var(--cube-half));
-}
-
+/* Lado 1: CONTACTO — cara superior */
 .cube-face--top {
-    transform:
-        rotateX(90deg)
-        translateZ(var(--cube-half));
+    transform: rotateX(90deg) translateZ(var(--cube-half));
 }
 
+/* Lado 2: HOME — cara frontal */
+.cube-face--front {
+    transform: translateZ(var(--cube-half));
+}
+
+/* Lado 3: SOLUCIONES — cara derecha */
+.cube-face--right {
+    transform: rotateY(90deg) translateZ(var(--cube-half));
+}
+
+/* Lado 4: HOME — cara trasera */
+.cube-face--back {
+    transform: rotateY(180deg) translateZ(var(--cube-half));
+}
+
+/* Lado 5: SOLUCIONES — cara izquierda */
+.cube-face--left {
+    transform: rotateY(-90deg) translateZ(var(--cube-half));
+}
+
+/* Lado 6: CONTACTO — cara inferior */
 .cube-face--bottom {
-    transform:
-        rotateX(-90deg)
-        translateZ(var(--cube-half));
+    transform: rotateX(-90deg) rotate(180deg) translateZ(var(--cube-half));
 }
 
 
 /* ==========================================================
-   09. SELECTOR DE ÁREA
-
-   Navegación auxiliar situada debajo del cubo.
+   07. SELECTOR DE ÁREA
+   Navegación auxiliar situada junto/debajo del cubo.
    ========================================================== */
 
 .section-selector {
@@ -196,11 +327,12 @@ button.cube-face:hover {
     justify-content: center;
 
     gap: 2rem;
+    transition: gap 280ms ease;
 }
 
 
 /* ==========================================================
-   10. BOTONES DEL SELECTOR
+   08. BOTONES DEL SELECTOR
    ========================================================== */
 
 .section-selector__button {
@@ -220,7 +352,6 @@ button.cube-face:hover {
 
     cursor: pointer;
 
-    /* Identity base para evitar saltos de stacking context */
     translate: 0px;
 
     transition:
@@ -228,25 +359,22 @@ button.cube-face:hover {
         transform 220ms cubic-bezier(0.2, 0, 0.15, 1);
 }
 
-
 .section-selector__button:hover {
-    color: var(--text-primary);
+    color: var(--brand-primary, #056CF2);
 
     transform:
         perspective(350px)
         translateZ(5px);
 }
 
-
 .section-selector__button.active {
     color: var(--text-primary);
-
     font-weight: 600;
 }
 
 
 /* ==========================================================
-   11. INDICADOR DE SECCIÓN ACTIVA
+   09. INDICADOR DE SECCIÓN ACTIVA
    ========================================================== */
 
 .section-selector__button.active::after {
@@ -260,20 +388,71 @@ button.cube-face:hover {
     width: 24px;
     height: 2px;
 
-    background: var(--text-primary);
+    background: var(--brand-primary, #056CF2);
+    box-shadow: 0 0 10px rgba(5, 108, 242, 0.85);
 
     transform: translateX(-50%);
 }
 
 
 /* ==========================================================
-   12. ACCESIBILIDAD — MOVIMIENTO REDUCIDO
+   10. RESPONSIVIDAD MÓVIL
+   ========================================================== */
+
+@media (max-width: 640px) {
+    .cube-navigation {
+        gap: 1.75rem;
+        padding: 1.75rem 0 1.25rem;
+    }
+
+    .site-header.is-scrolled .cube-navigation {
+        gap: 1rem;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .site-header.is-scrolled .cube-scene {
+        transform: scale(0.50);
+    }
+
+    .section-selector {
+        gap: 1.25rem;
+    }
+
+    .section-selector__button {
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+    }
+}
+
+
+/* ==========================================================
+   11. ACCESIBILIDAD — MOVIMIENTO REDUCIDO
    ========================================================== */
 
 @media (prefers-reduced-motion: reduce) {
 
     .section-selector__button:hover {
         transform: none;
+    }
+
+    .cube-navigation {
+        transition: none;
+    }
+
+    .cube-scene {
+        transition: none;
+    }
+
+    .cube-orbit {
+        animation: none;
+    }
+
+    .cube-hint {
+        animation: none;
+    }
+
+    .cube-hint__icon {
+        animation: none;
     }
 
 }

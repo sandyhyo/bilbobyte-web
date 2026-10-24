@@ -108,8 +108,8 @@
 /* ==========================================================
    07. CAMPOS DE TEXTO
 
-   El color de borde y el fondo reflejan el sistema de color
-   de la web. El campo activo eleva ligeramente su borde.
+   El color de borde y el fondo reflejan la paleta de la web.
+   El campo activo eleva su borde con el azul eléctrico #056CF2.
    ========================================================== */
 
 .contact-form__input {
@@ -123,7 +123,7 @@
     border: 1px solid var(--border-soft);
     border-radius: 4px;
 
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(2, 40, 89, 0.25);
 
     color: var(--text-primary);
 
@@ -132,7 +132,8 @@
 
     transition:
         border-color 180ms ease,
-        background 180ms ease;
+        background 180ms ease,
+        box-shadow 180ms ease;
 
     appearance: none;
 }
@@ -141,8 +142,9 @@
 .contact-form__input:focus {
     outline: none;
 
-    border-color: rgba(255, 255, 255, 0.45);
-    background: rgba(255, 255, 255, 0.07);
+    border-color: var(--brand-primary, #056CF2);
+    background: rgba(2, 40, 89, 0.45);
+    box-shadow: 0 0 0 3px rgba(5, 108, 242, 0.25);
 }
 
 
@@ -218,40 +220,49 @@
     padding: 0.85rem 2.25rem;
     min-height: 48px;
 
-    border: 1px solid var(--border-soft);
+    border: 1px solid var(--brand-primary, #056CF2);
     border-radius: 4px;
 
-    background: transparent;
+    background: linear-gradient(135deg, rgba(5, 108, 242, 0.90) 0%, rgba(4, 96, 217, 0.95) 100%);
 
-    color: var(--text-primary);
+    color: #ffffff;
 
     font-size: 0.9rem;
-    font-weight: 500;
+    font-weight: 600;
 
     letter-spacing: 0.06em;
 
     cursor: pointer;
 
+    box-shadow: 0 4px 16px rgba(5, 108, 242, 0.32);
+
     transition:
         background 200ms ease,
-        border-color 200ms ease;
+        border-color 200ms ease,
+        box-shadow 200ms ease,
+        transform 180ms ease;
 }
 
 
 .contact-form__submit:hover {
-    background: rgba(255, 255, 255, 0.07);
-    border-color: rgba(255, 255, 255, 0.3);
+    background: linear-gradient(135deg, #056CF2 0%, #0460D9 100%);
+    border-color: #056CF2;
+    box-shadow: 0 6px 24px rgba(5, 108, 242, 0.55);
+    transform: translateY(-1px);
 }
 
 
 .contact-form__submit:active {
-    background: rgba(255, 255, 255, 0.12);
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(5, 108, 242, 0.4);
 }
 
 
 .contact-form__submit:disabled {
     opacity: 0.45;
     cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 

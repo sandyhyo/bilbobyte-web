@@ -3,44 +3,132 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fondo circuito animado con CPU</title>
+<title>Fondo circuito animado con CPU y cambio cromático — BilboByte</title>
 <style>
-  :root { --bg: #05070d; }
+  :root {
+    --bg: #0D0D0D;
+    --brand-primary: #056CF2;
+    --brand-secondary: #0460D9;
+    --bg-secondary: #022859;
+    --bg-soft: #034AA6;
+  }
   html { background: var(--bg); }
   html, body { margin: 0; height: 100%; }
-  body { background: transparent; color: #e8ecf5; font-family: system-ui, sans-serif; }
+  body { background: transparent; color: #e8ecf5; font-family: system-ui, -apple-system, sans-serif; }
+
+  /* ===== CONTROLES DE DEMOSTRACIÓN ===== */
+  .demo-nav {
+    position: fixed;
+    top: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 1rem;
+    z-index: 10;
+    background: rgba(13, 13, 13, 0.85);
+    padding: 0.6rem 1.25rem;
+    border-radius: 40px;
+    border: 1px solid rgba(5, 108, 242, 0.35);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  }
+
+  .demo-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    color: #d4dae0;
+    padding: 0.45rem 1.1rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 250ms ease;
+  }
+
+  .demo-btn:hover {
+    color: #ffffff;
+    border-color: rgba(5, 108, 242, 0.4);
+  }
+
+  .demo-btn.active[data-section="home"] {
+    background: #056CF2;
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(5, 108, 242, 0.7);
+  }
+
+  .demo-btn.active[data-section="solutions"] {
+    background: #00d7ff;
+    color: #000000;
+    box-shadow: 0 0 15px rgba(0, 215, 255, 0.7);
+  }
+
+  .demo-btn.active[data-section="contact"] {
+    background: #8a4bff;
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(138, 75, 255, 0.7);
+  }
 
   /* ===== FONDO ===== */
   #circuit-bg {
     position: fixed; inset: 0; z-index: -1; overflow: hidden; background: var(--bg);
     pointer-events: none;
   }
-  #circuit-bg canvas { width: 100%; height: 100%; display: block; opacity: .85; } /* baja este valor para más sutileza */
+  #circuit-bg canvas { width: 100%; height: 100%; display: block; opacity: .85; }
   /* viñeta suave */
   #circuit-bg::after {
     content: ""; position: absolute; inset: 0;
-    background: radial-gradient(ellipse at center, rgba(5,7,13,.45) 0%, rgba(5,7,13,.1) 55%, rgba(5,7,13,0) 100%);
+    background: radial-gradient(ellipse at center, rgba(13,13,13,.15) 0%, rgba(13,13,13,.55) 60%, rgba(13,13,13,.92) 100%);
   }
 </style>
 </head>
 <body>
 
+<nav class="demo-nav" aria-label="Cambio de sección">
+  <button type="button" class="demo-btn active" data-section="home">HOME</button>
+  <button type="button" class="demo-btn" data-section="solutions">SOLUCIONES</button>
+  <button type="button" class="demo-btn" data-section="contact">CONTACTO</button>
+</nav>
+
 <div id="circuit-bg"><canvas></canvas></div>
 
 <script>
 (() => {
+  /* ===== COLORES POR SECCIÓN (CHISPAS Y ELECTRICIDAD) ===== */
+  const SECTION_COLORS = {
+    home:      { r: 5,   g: 108, b: 242 }, // #056CF2 Azul Eléctrico BilboByte
+    solutions: { r: 0,   g: 215, b: 255 }, // Cian Neón de Soluciones
+    contact:   { r: 138, g: 75,  b: 255 }  // Violeta Neón de Contacto
+  };
+
+  let currentRGB = { r: 5, g: 108, b: 242 };
+  let targetRGB  = { r: 5, g: 108, b: 242 };
+
+  function setSection(name) {
+    if (SECTION_COLORS[name]) {
+      targetRGB = SECTION_COLORS[name];
+      document.querySelectorAll('.demo-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.section === name);
+      });
+    }
+  }
+  window.setCircuitSection = setSection;
+
+  document.querySelectorAll('.demo-btn').forEach(btn => {
+    btn.addEventListener('click', () => setSection(btn.dataset.section));
+  });
+
   /* ===== CONFIGURACIÓN ===== */
   const CFG = {
-    grid: 14,                 // tamaño de celda (px)
-    traceColor: 'rgba(214,160,30,0.38)',
-    padColor: 'rgba(40,120,255,0.55)',
-    pulseRGB: '60,140,255',   // color de los pulsos
-    maxPulses: 4,             // máximo de pulsos simultáneos
-    speed: [150, 300],        // velocidad px/s
-    tail: [25, 35],           // largo de la estela px
-    densityDiv: 9000,         // más grande = menos pistas
-    cpuSize: 0.22,            // tamaño del CPU (fracción del lado menor de la pantalla)
-    cpuLabel: 'CPU'           // texto del chip ('' para ocultarlo)
+    grid: 14,
+    traceColor: 'rgba(3, 74, 166, 0.32)',
+    padColor: 'rgba(4, 96, 217, 0.45)',
+    maxPulses: 5,
+    speed: [150, 300],
+    tail: [25, 38],
+    densityDiv: 9000,
+    cpuSize: 0.28,
+    cpuLabel: ''
   };
 
   const wrap = document.getElementById('circuit-bg');
@@ -53,6 +141,15 @@
   const randInt = (a, b) => Math.floor(rand(a, b + 1));
 
   let W, H, dpr, traces = [], pulses = [], cpu, layer, raf, last = 0;
+
+  /* ===== LOGO CEREBRO MASTER PREMIUM ===== */
+  const cpuLogo = new Image();
+  let logoLoaded = false;
+  cpuLogo.src = '../../assets/images/cerebro-master-premium.png';
+  cpuLogo.onload = () => {
+    logoLoaded = true;
+    if (layer) buildStatic();
+  };
 
   /* ----- Utilidades de pista ----- */
   function finalize(pts, endPad = true) {
@@ -72,7 +169,7 @@
             t.pts[i-1][1] + (t.pts[i][1]-t.pts[i-1][1]) * k];
   }
 
-  /* ----- Pistas aleatorias (45° y 90°) ----- */
+  /* ----- Pistas aleatorias ----- */
   function makeTrace() {
     const g = CFG.grid, cols = Math.floor(W / g), rows = Math.floor(H / g);
     let cx = randInt(1, cols - 1), cy = randInt(1, rows - 1);
@@ -93,7 +190,7 @@
     return pts.length < 3 ? null : finalize(pts);
   }
 
-  /* ----- CPU: cuerpo, pines y pistas que salen de él ----- */
+  /* ----- CPU: cuerpo, pines y pistas ----- */
   function clipToScreen(pts) {
     const out = [pts[0]];
     for (let i = 1; i < pts.length; i++) {
@@ -112,13 +209,12 @@
 
   function buildCpu() {
     const g = CFG.grid;
-    const h = Math.max(4, Math.min(8, Math.round(Math.min(W, H) * CFG.cpuSize / 2 / g)));
+    const h = Math.max(5, Math.min(10, Math.round(Math.min(W, H) * CFG.cpuSize / 2 / g)));
     const cx = Math.round(W / 2 / g) * g, cy = Math.round(H / 2 / g) * g, half = h * g;
     cpu = { cx, cy, half, h, pins: [], traces: [] };
 
     for (const [ox, oy] of [[0,-1],[1,0],[0,1],[-1,0]]) {
-      const lx = -oy, ly = ox; // vector lateral
-      // parámetros por lado: todas las pistas del lado quedan paralelas (como un bus)
+      const lx = -oy, ly = ox;
       const s = randInt(1,3), m = randInt(2,5), L = randInt(3,14),
             m2 = randInt(2,6), L2 = randInt(2,10), sg2 = Math.random() < .5 ? 1 : -1;
       for (let k = -(h - 1); k <= h - 1; k++) {
@@ -147,7 +243,7 @@
     return false;
   }
 
-  /* ----- Capa estática (pistas + CPU), se dibuja una sola vez ----- */
+  /* ----- Capa estática (pistas + CPU + Logo Cerebro Master Premium) ----- */
   function buildStatic() {
     layer = document.createElement('canvas');
     layer.width = W * dpr; layer.height = H * dpr;
@@ -166,33 +262,51 @@
       if (t.endPad) pad(t.pts[t.pts.length-1][0], t.pts[t.pts.length-1][1]);
     }
 
-    // cuerpo del chip
+    // Cuerpo del chip (#022859)
     const { cx, cy, half } = cpu, x0 = cx - half, y0 = cy - half, S = half * 2;
     const rr = (x, y, w, h, r) => { c.beginPath(); c.roundRect ? c.roundRect(x, y, w, h, r) : c.rect(x, y, w, h); };
-    rr(x0, y0, S, S, 5);
-    c.fillStyle = '#05070d'; c.fill();
-    c.strokeStyle = 'rgba(214,160,30,0.65)'; c.lineWidth = 1.5; c.stroke();
+    rr(x0, y0, S, S, 6);
+    c.fillStyle = '#022859'; c.fill();
+    c.strokeStyle = 'rgba(5, 108, 242, 0.50)'; c.lineWidth = 1.5; c.stroke();
 
-    // muesca de orientación
-    c.beginPath(); c.arc(x0 + 9, y0 + 9, 3, 0, 7);
-    c.strokeStyle = 'rgba(214,160,30,0.5)'; c.lineWidth = 1; c.stroke();
+    // Muesca
+    c.beginPath(); c.arc(x0 + 10, y0 + 10, 3.5, 0, 7);
+    c.strokeStyle = 'rgba(5, 108, 242, 0.40)'; c.lineWidth = 1; c.stroke();
 
-    // die interno
-    const ins = CFG.grid * 3, dx = x0 + ins, dy = y0 + ins, ds = S - ins * 2;
-    c.strokeStyle = 'rgba(60,140,255,0.5)';
-    rr(dx, dy, ds, ds, 3); c.stroke();
-    c.strokeStyle = 'rgba(60,140,255,0.16)';
+    // Die interno amplio
+    const ins = Math.round(CFG.grid * 1.2), dx = x0 + ins, dy = y0 + ins, ds = S - ins * 2;
+    c.strokeStyle = 'rgba(5, 108, 242, 0.45)';
+    rr(dx, dy, ds, ds, 4); c.stroke();
+
+    c.strokeStyle = 'rgba(5, 108, 242, 0.10)';
     for (let i = 1; i < 4; i++) {
       c.beginPath(); c.moveTo(dx + ds*i/4, dy); c.lineTo(dx + ds*i/4, dy + ds);
       c.moveTo(dx, dy + ds*i/4); c.lineTo(dx + ds, dy + ds*i/4); c.stroke();
     }
-    if (CFG.cpuLabel) {
-      c.font = `600 ${Math.round(S * 0.14)}px ui-monospace, Menlo, Consolas, monospace`;
-      c.textAlign = 'center'; c.textBaseline = 'middle';
-      c.fillStyle = 'rgba(60,140,255,0.55)';
-      c.fillText(CFG.cpuLabel, cx, cy);
+
+    // Logo ocupando gran parte del cuadro (82%) para máxima presencia visual
+    if (logoLoaded && cpuLogo.naturalWidth) {
+      const maxW = S * 0.82;
+      const maxH = S * 0.82;
+      const aspect = cpuLogo.naturalWidth / cpuLogo.naturalHeight;
+      let lw = maxW;
+      let lh = lw / aspect;
+      if (lh > maxH) {
+        lh = maxH;
+        lw = lh * aspect;
+      }
+      const lx = cx - lw / 2;
+      const ly = cy - lh / 2;
+
+      c.save();
+      rr(x0 + 4, y0 + 4, S - 8, S - 8, 4);
+      c.clip();
+      c.globalAlpha = 0.95;
+      c.drawImage(cpuLogo, lx, ly, lw, lh);
+      c.restore();
     }
-    // pines
+
+    // Pines
     c.fillStyle = CFG.padColor;
     for (const [px, py] of cpu.pins) pad(px, py);
   }
@@ -219,27 +333,36 @@
   }
 
   function newPulse(initial) {
-    // la mayoría de pulsos salen de / llegan al CPU
     const useCpu = cpu.traces.length && Math.random() < 0.65;
     const pool = useCpu ? cpu.traces : traces;
     const t = pool[randInt(0, pool.length - 1)];
     return {
-      t, rev: useCpu && Math.random() < .5,   // rev = viaja hacia el CPU
+      t, rev: useCpu && Math.random() < .5,
       d: initial ? -rand(0, 600) : -rand(0, 200),
       v: rand(...CFG.speed), tail: rand(...CFG.tail)
     };
   }
 
-  /* ----- Dibujo ----- */
+  /* ----- Dibujo con cambio de color reactivo ----- */
   function draw(ts) {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(layer, 0, 0);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    // el die del CPU "respira" muy suavemente
-    const ins = CFG.grid * 3, ds = cpu.half * 2 - ins * 2;
-    ctx.fillStyle = `rgba(60,140,255,${0.04 + 0.035 * Math.sin(ts / 1400)})`;
+    // Interpolación de color entre secciones
+    currentRGB.r += (targetRGB.r - currentRGB.r) * 0.06;
+    currentRGB.g += (targetRGB.g - currentRGB.g) * 0.06;
+    currentRGB.b += (targetRGB.b - currentRGB.b) * 0.06;
+
+    const pr = Math.round(currentRGB.r);
+    const pg = Math.round(currentRGB.g);
+    const pb = Math.round(currentRGB.b);
+    const pulseRGB = `${pr}, ${pg}, ${pb}`;
+
+    // Respiración del die
+    const ins = Math.round(CFG.grid * 1.2), ds = cpu.half * 2 - ins * 2;
+    ctx.fillStyle = `rgba(${pulseRGB}, ${0.04 + 0.025 * Math.sin(ts / 1500)})`;
     ctx.fillRect(cpu.cx - cpu.half + ins, cpu.cy - cpu.half + ins, ds, ds);
 
     ctx.globalCompositeOperation = 'lighter';
@@ -255,9 +378,9 @@
         if (dist < 0 - step) break;
         const cur = at(dist);
         const a = Math.pow(1 - i / n, 1.6);
-        ctx.strokeStyle = `rgba(${CFG.pulseRGB},${a * 0.22})`; ctx.lineWidth = 6;
+        ctx.strokeStyle = `rgba(${pulseRGB},${a * 0.22})`; ctx.lineWidth = 6;
         ctx.beginPath(); ctx.moveTo(prev[0], prev[1]); ctx.lineTo(cur[0], cur[1]); ctx.stroke();
-        ctx.strokeStyle = `rgba(${CFG.pulseRGB},${a * 0.9})`; ctx.lineWidth = 1.6;
+        ctx.strokeStyle = `rgba(${pulseRGB},${a * 0.85})`; ctx.lineWidth = 1.6;
         ctx.beginPath(); ctx.moveTo(prev[0], prev[1]); ctx.lineTo(cur[0], cur[1]); ctx.stroke();
         prev = cur;
       }
@@ -283,7 +406,6 @@
   }
   function stop() { cancelAnimationFrame(raf); raf = null; }
 
-  /* ----- Eventos ----- */
   let rt;
   addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { stop(); setup(); start(); }, 200); });
   document.addEventListener('visibilitychange', () => document.hidden ? stop() : start());

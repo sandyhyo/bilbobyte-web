@@ -77,7 +77,8 @@
 
     padding: var(--section-space) 0;
 
-    border-top: 1px solid var(--border-soft);
+    border-top: 2.5px solid rgba(5, 108, 242, 0.75);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
 

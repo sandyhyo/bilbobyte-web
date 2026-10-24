@@ -2,32 +2,63 @@
    circuit-bg.js
    Animación de fondo tipo circuito impreso.
 
-   Adaptada al estilo visual de BilboByte:
-   - Fondo base: --bg-primary (#0b1623)
-   - Trazas: azul marino muy suave, coherente con --bg-soft
-   - Pulsos: azul medio, sin saturar el fondo
-   - Sin elementos dorados/amarillos (ajenos a la identidad)
-   - Opacidad reducida para mantenerse como fondo discreto
+   Adaptada a la paleta oficial de BilboByte:
+   #056CF2 / #0460D9 / #034AA6 / #022859 / #0D0D0D
+
+   Características:
+   - Fondo base #0D0D0D con trazas en azul marino #034AA6
+   - CPU con base #022859 y el logo "Cerebro Master Premium.png"
+     con tamaño prominente ocupando gran parte del chip para
+     máxima visibilidad de los visitantes
+   - Chispas y destellos eléctricos con cambio de color reactivo:
+     * HOME: Azul eléctrico #056CF2 (5, 108, 242)
+     * SOLUCIONES: Cian Neón Tecnológico (0, 215, 255)
+     * CONTACTO: Violeta Neón de Señales (138, 75, 255)
+   - Transición cromática suave e interpolada entre secciones
    ========================================================== */
 
 (() => {
 
-    /* ===== CONFIGURACIÓN ===== */
+    /* ===== COLORES POR SECCIÓN PARA LOS PULSOS ELÉCTRICOS ===== */
+
+    const SECTION_COLORS = {
+        home:      { r: 5,   g: 108, b: 242 }, // #056CF2 Azul Eléctrico BilboByte
+        solutions: { r: 0,   g: 215, b: 255 }, // Cian Neón Tecnológico
+        contact:   { r: 138, g: 75,  b: 255 }  // Violeta Neón de Comunicación
+    };
+
+    let currentRGB = { r: 5, g: 108, b: 242 };
+    let targetRGB  = { r: 5, g: 108, b: 242 };
+
+    /* Permite cambiar el color desde cube.js o eventos externos */
+    function setSection(sectionName) {
+        if (SECTION_COLORS[sectionName]) {
+            targetRGB = SECTION_COLORS[sectionName];
+        }
+    }
+    window.setCircuitSection = setSection;
+    window.addEventListener('sectionchange', (e) => {
+        if (e.detail && e.detail.section) {
+            setSection(e.detail.section);
+        }
+    });
+
+
+    /* ===== CONFIGURACIÓN GENERAL ===== */
 
     const CFG = {
         grid:       14,                          // tamaño de celda (px)
-        traceColor: 'rgba(30, 80, 140, 0.30)',   // trazas: azul marino suave
-        padColor:   'rgba(50, 120, 200, 0.40)',  // pads: azul medio
-        pulseRGB:   '80, 150, 220',              // pulsos: azul claro
-        maxPulses:  4,
+        traceColor: 'rgba(3, 74, 166, 0.32)',    // trazas: #034AA6 suave
+        padColor:   'rgba(4, 96, 217, 0.45)',    // pads: #0460D9 medio
+        maxPulses:  5,
         speed:      [140, 280],                  // px/s
-        tail:       [24, 36],                    // largo de la estela px
+        tail:       [24, 38],                    // largo de la estela px
         densityDiv: 9000,
-        cpuSize:    0.22,
-        cpuLabel:   ''                           // sin texto en el chip
+        cpuSize:    0.28,                        // tamaño generoso para destacar el chip
+        cpuLabel:   ''                           // se usa el logo en vez de texto
     };
 
-    const wrap   = document.getElementById('circuit-bg');
+    const wrap = document.getElementById('circuit-bg');
     if (!wrap) return;
 
     const canvas = wrap.querySelector('canvas');
@@ -39,6 +70,68 @@
     const randInt = (a, b) => Math.floor(rand(a, b + 1));
 
     let W, H, dpr, traces = [], pulses = [], cpu, layer, raf, last = 0;
+
+
+    /* ===== CARGA Y PROCESADO DEL LOGO CEREBRO MASTER PREMIUM ===== */
+
+    const cpuLogo = new Image();
+    let logoLoaded = false;
+    let processedLogo = null;
+
+    function processLogo(img) {
+        try {
+            const oc = document.createElement('canvas');
+            const maxDim = 1000;
+            const scale = Math.min(1, maxDim / Math.max(img.naturalWidth, img.naturalHeight));
+            oc.width = Math.round(img.naturalWidth * scale);
+            oc.height = Math.round(img.naturalHeight * scale);
+            const octx = oc.getContext('2d');
+
+            octx.drawImage(img, 0, 0, oc.width, oc.height);
+            const imgData = octx.getImageData(0, 0, oc.width, oc.height);
+            const d = imgData.data;
+
+            for (let i = 0; i < d.length; i += 4) {
+                const r = d[i], g = d[i+1], b = d[i+2];
+                // Luminancia perceptual
+                const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+
+                // Eliminar el fondo negro original para que no actúe como un parche
+                if (lum < 14) {
+                    d[i+3] = 0;
+                    continue;
+                }
+
+                // Suavizado anti-aliasing en los bordes para eliminar cualquier borde oscuro
+                if (lum < 38) {
+                    const factor = (lum - 14) / (38 - 14);
+                    d[i+3] = Math.round(d[i+3] * factor);
+                }
+
+                // CONSERVAR LOS COLORES ORIGINALES:
+                // El cerebro conserva sus tonos azules/eléctricos auténticos
+                // y las tuercas/engranajes conservan su acabado plateado metálico.
+                d[i]   = r;
+                d[i+1] = g;
+                d[i+2] = b;
+            }
+
+            octx.putImageData(imgData, 0, 0);
+            return oc;
+        } catch (err) {
+            console.warn('Fallback a imagen estándar:', err);
+            return img;
+        }
+    }
+
+    cpuLogo.src = 'assets/images/cerebro-master-premium.png';
+    cpuLogo.onload = () => {
+        logoLoaded = true;
+        processedLogo = processLogo(cpuLogo);
+        if (layer) {
+            buildStatic();
+        }
+    };
 
 
     /* ----- Utilidades de pista ----- */
@@ -106,7 +199,7 @@
 
     function buildCpu() {
         const g    = CFG.grid;
-        const h    = Math.max(4, Math.min(8, Math.round(Math.min(W, H) * CFG.cpuSize / 2 / g)));
+        const h    = Math.max(5, Math.min(10, Math.round(Math.min(W, H) * CFG.cpuSize / 2 / g)));
         const cx   = Math.round(W / 2 / g) * g;
         const cy   = Math.round(H / 2 / g) * g;
         const half = h * g;
@@ -144,7 +237,7 @@
     }
 
 
-    /* ----- Capa estática: se dibuja una sola vez en un canvas auxiliar ----- */
+    /* ----- Capa estática: pistas + cuerpo de CPU + logo ----- */
 
     function buildStatic() {
         layer        = document.createElement('canvas');
@@ -157,7 +250,7 @@
 
         const pad = (x, y) => { c.beginPath(); c.arc(x, y, 2.5, 0, 7); c.fill(); };
 
-        /* trazas aleatorias */
+        /* Trazas de circuito impreso */
         for (const t of traces) {
             c.strokeStyle = CFG.traceColor;
             c.beginPath();
@@ -168,7 +261,7 @@
             if (t.endPad) pad(t.pts[t.pts.length-1][0], t.pts[t.pts.length-1][1]);
         }
 
-        /* cuerpo del chip */
+        /* Cuerpo del chip CPU — usa #022859 para integrarse en la paleta */
         const { cx, cy, half } = cpu;
         const x0 = cx - half, y0 = cy - half, S = half * 2;
         const rr = (x, y, w, h, r) => {
@@ -176,38 +269,105 @@
             c.roundRect ? c.roundRect(x, y, w, h, r) : c.rect(x, y, w, h);
         };
 
-        /* placa base del chip — usa --bg-secondary para integrarse */
-        rr(x0, y0, S, S, 5);
-        c.fillStyle   = '#0f2033';
+        /* Placa base del chip: sustrato de silicio con degradado de profundidad */
+        rr(x0, y0, S, S, 6);
+        const gradBase = c.createLinearGradient(x0, y0, x0 + S, y0 + S);
+        gradBase.addColorStop(0, '#011633');
+        gradBase.addColorStop(0.5, '#022859');
+        gradBase.addColorStop(1, '#011126');
+        c.fillStyle   = gradBase;
         c.fill();
-        c.strokeStyle = 'rgba(50, 120, 200, 0.45)';
+        c.strokeStyle = 'rgba(5, 108, 242, 0.55)';
         c.lineWidth   = 1.5;
         c.stroke();
 
-        /* muesca de orientación */
+        /* Muesca de orientación del chip (Pin 1) */
         c.beginPath();
-        c.arc(x0 + 9, y0 + 9, 3, 0, 7);
-        c.strokeStyle = 'rgba(50, 120, 200, 0.35)';
+        c.arc(x0 + 10, y0 + 10, 3.5, 0, Math.PI * 2);
+        c.strokeStyle = 'rgba(5, 108, 242, 0.45)';
         c.lineWidth   = 1;
         c.stroke();
 
-        /* die interno */
-        const ins = CFG.grid * 3;
+        /* Die interno amplio */
+        const ins = Math.round(CFG.grid * 1.2);
         const dx = x0 + ins, dy = y0 + ins, ds = S - ins * 2;
-        c.strokeStyle = 'rgba(80, 150, 220, 0.35)';
-        rr(dx, dy, ds, ds, 3);
+        
+        // Sustrato reflectivo interno del die
+        const gradDie = c.createRadialGradient(cx, cy, ds * 0.1, cx, cy, ds * 0.75);
+        gradDie.addColorStop(0, 'rgba(3, 74, 166, 0.28)');
+        gradDie.addColorStop(1, 'rgba(1, 18, 42, 0.88)');
+        rr(dx, dy, ds, ds, 4);
+        c.fillStyle = gradDie;
+        c.fill();
+
+        c.strokeStyle = 'rgba(5, 108, 242, 0.45)';
+        c.lineWidth   = 1;
         c.stroke();
-        c.strokeStyle = 'rgba(80, 150, 220, 0.12)';
-        for (let i = 1; i < 4; i++) {
+
+        /* Micro-trazas del bus interno del procesador */
+        c.strokeStyle = 'rgba(5, 108, 242, 0.12)';
+        c.lineWidth   = 1;
+        for (let i = 1; i < 6; i++) {
             c.beginPath();
-            c.moveTo(dx + ds*i/4, dy);
-            c.lineTo(dx + ds*i/4, dy + ds);
-            c.moveTo(dx, dy + ds*i/4);
-            c.lineTo(dx + ds, dy + ds*i/4);
+            c.moveTo(dx + ds * i / 6, dy);
+            c.lineTo(dx + ds * i / 6, dy + ds);
+            c.moveTo(dx, dy + ds * i / 6);
+            c.lineTo(dx + ds, dy + ds * i / 6);
             c.stroke();
         }
 
-        /* pines del chip */
+        /* Marcas fiduciales de alineación en las 4 esquinas del die */
+        c.strokeStyle = 'rgba(5, 108, 242, 0.45)';
+        const fidLen = 6;
+        for (const [fx, fy, sx, sy] of [
+            [dx + 4, dy + 4, 1, 1],
+            [dx + ds - 4, dy + 4, -1, 1],
+            [dx + 4, dy + ds - 4, 1, -1],
+            [dx + ds - 4, dy + ds - 4, -1, -1]
+        ]) {
+            c.beginPath();
+            c.moveTo(fx, fy + sy * fidLen);
+            c.lineTo(fx, fy);
+            c.lineTo(fx + sx * fidLen, fy);
+            c.stroke();
+        }
+
+        /* Presentar el logo integrado como grabado láser sobre el silicio */
+        const logoTarget = processedLogo || (logoLoaded ? cpuLogo : null);
+        if (logoTarget) {
+            const maxW   = ds * 0.88;
+            const maxH   = ds * 0.88;
+            const targetW = logoTarget.naturalWidth || logoTarget.width;
+            const targetH = logoTarget.naturalHeight || logoTarget.height;
+            const aspect = targetW / targetH;
+
+            let lw = maxW;
+            let lh = lw / aspect;
+            if (lh > maxH) {
+                lh = maxH;
+                lw = lh * aspect;
+            }
+
+            const lx = cx - lw / 2;
+            const ly = cy - lh / 2;
+
+            c.save();
+            rr(dx + 2, dy + 2, ds - 4, ds - 4, 3);
+            c.clip();
+
+            // Sombra de oclusión ambiental para que el logo se sienta montado con relieve en el silicio
+            c.shadowColor = 'rgba(0, 0, 0, 0.65)';
+            c.shadowBlur  = 12;
+            c.shadowOffsetY = 2;
+            c.globalAlpha = 0.96;
+            c.drawImage(logoTarget, lx, ly, lw, lh);
+
+            c.shadowBlur  = 0;
+            c.shadowOffsetY = 0;
+            c.restore();
+        }
+
+        /* Pines del chip */
         c.fillStyle = CFG.padColor;
         for (const [px, py] of cpu.pins) pad(px, py);
     }
@@ -253,7 +413,7 @@
     }
 
 
-    /* ----- Dibujo ----- */
+    /* ----- Renderizado continuo ----- */
 
     function draw(ts) {
         ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -261,15 +421,44 @@
         ctx.drawImage(layer, 0, 0);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-        /* respiración suave del die */
-        const ins = CFG.grid * 3, ds = cpu.half * 2 - ins * 2;
-        ctx.fillStyle = `rgba(80,150,220,${0.025 + 0.02 * Math.sin(ts / 1600)})`;
+        /* Interpolación suave del color de los destellos hacia el de la sección activa */
+        currentRGB.r += (targetRGB.r - currentRGB.r) * 0.06;
+        currentRGB.g += (targetRGB.g - currentRGB.g) * 0.06;
+        currentRGB.b += (targetRGB.b - currentRGB.b) * 0.06;
+
+        const pr = Math.round(currentRGB.r);
+        const pg = Math.round(currentRGB.g);
+        const pb = Math.round(currentRGB.b);
+        const pulseRGB = `${pr}, ${pg}, ${pb}`;
+
+        /* Respiración luminiscente del die con el color activo */
+        const ins = Math.round(CFG.grid * 1.2), ds = cpu.half * 2 - ins * 2;
+        ctx.fillStyle = `rgba(${pulseRGB}, ${0.035 + 0.02 * Math.sin(ts / 1500)})`;
         ctx.fillRect(cpu.cx - cpu.half + ins, cpu.cy - cpu.half + ins, ds, ds);
+
+        /* El grabado del logo respira y se ilumina sutilmente con los pulsos de la sección activa */
+        const logoTarget = processedLogo || (logoLoaded ? cpuLogo : null);
+        if (logoTarget && cpu) {
+            const maxW = ds * 0.88, maxH = ds * 0.88;
+            const targetW = logoTarget.naturalWidth || logoTarget.width;
+            const targetH = logoTarget.naturalHeight || logoTarget.height;
+            const aspect = targetW / targetH;
+            let lw = maxW, lh = lw / aspect;
+            if (lh > maxH) { lh = maxH; lw = lh * aspect; }
+            const lx = cpu.cx - lw / 2, ly = cpu.cy - lh / 2;
+
+            ctx.save();
+            ctx.globalCompositeOperation = 'lighter';
+            ctx.globalAlpha = 0.08 + 0.05 * Math.sin(ts / 1200);
+            ctx.drawImage(logoTarget, lx, ly, lw, lh);
+            ctx.restore();
+        }
 
         ctx.globalCompositeOperation = 'lighter';
         ctx.lineCap  = 'round';
         ctx.lineJoin = 'round';
 
+        /* Destellos eléctricos por las pistas */
         for (const p of pulses) {
             if (p.d < 0) continue;
             const at = dist => pointAt(p.t, p.rev ? p.t.length - dist : dist);
@@ -280,9 +469,9 @@
                 if (dist < 0 - step) break;
                 const cur = at(dist);
                 const a   = Math.pow(1 - i / n, 1.6);
-                ctx.strokeStyle = `rgba(${CFG.pulseRGB},${a * 0.18})`; ctx.lineWidth = 6;
+                ctx.strokeStyle = `rgba(${pulseRGB},${a * 0.22})`; ctx.lineWidth = 6;
                 ctx.beginPath(); ctx.moveTo(prev[0], prev[1]); ctx.lineTo(cur[0], cur[1]); ctx.stroke();
-                ctx.strokeStyle = `rgba(${CFG.pulseRGB},${a * 0.80})`; ctx.lineWidth = 1.6;
+                ctx.strokeStyle = `rgba(${pulseRGB},${a * 0.85})`; ctx.lineWidth = 1.6;
                 ctx.beginPath(); ctx.moveTo(prev[0], prev[1]); ctx.lineTo(cur[0], cur[1]); ctx.stroke();
                 prev = cur;
             }

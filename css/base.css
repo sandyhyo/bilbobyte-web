@@ -3,21 +3,28 @@
 
    Punto central para modificar la identidad visual,
    dimensiones generales y espaciados de la web.
+   Actualizada según paleta oficial:
+   #056CF2 / #0460D9 / #034AA6 / #022859 / #0D0D0D
    ========================================================== */
 
 :root {
 
-    /* ---------- Colores ---------- */
+    /* ---------- Colores Principales (Paleta BilboByte) ---------- */
 
-    --bg-primary: #0b1623;
-    --bg-secondary: #0f2033;
-    --bg-soft: #132b42;
+    --bg-primary: #0D0D0D;
+    --bg-secondary: #022859;
+    --bg-soft: #034AA6;
+
+    --brand-secondary: #0460D9;
+    --brand-primary: #056CF2;
+
+    --accent-glow: rgba(5, 108, 242, 0.4);
 
     --text-primary: #ffffff;
     --text-secondary: #d4dae0;
-    --text-muted: #aeb7c2;
+    --text-muted: #8b9bb0;
 
-    --border-soft: rgba(255, 255, 255, 0.12);
+    --border-soft: rgba(5, 108, 242, 0.22);
 
 
     /* ---------- Dimensiones ---------- */
@@ -59,7 +66,7 @@ body {
    03. FONDO ANIMADO Y CUERPO DE LA WEB
 
    El fondo combina el canvas de circuito con degradados
-   radiales suaves en tonos azules para conservar la identidad
+   radiales suaves en tonos de la paleta para conservar la identidad
    y asegurar la máxima legibilidad de los textos.
    ========================================================== */
 
@@ -73,12 +80,12 @@ body {
     background:
         radial-gradient(
             circle at 75% 20%,
-            rgba(30, 70, 105, 0.25),
+            rgba(3, 74, 166, 0.22),
             transparent 45%
         ),
         radial-gradient(
             circle at 15% 65%,
-            rgba(19, 48, 75, 0.22),
+            rgba(2, 40, 89, 0.35),
             transparent 48%
         ),
         var(--bg-primary);
@@ -88,7 +95,7 @@ body {
     display: block;
     width: 100%;
     height: 100%;
-    opacity: 0.70;
+    opacity: 0.72;
 }
 
 #circuit-bg::after {
@@ -97,9 +104,9 @@ body {
     inset: 0;
     background: radial-gradient(
         ellipse at center,
-        rgba(11, 22, 35, 0.15) 0%,
-        rgba(11, 22, 35, 0.50) 65%,
-        rgba(11, 22, 35, 0.85) 100%
+        rgba(13, 13, 13, 0.15) 0%,
+        rgba(13, 13, 13, 0.55) 65%,
+        rgba(13, 13, 13, 0.90) 100%
     );
     pointer-events: none;
 }
@@ -122,9 +129,44 @@ body {
 }
 
 
+/* ==========================================================
+   04. CABECERA FLOTANTE / MÓVIL
+   Acompaña la navegación al bajar a lo largo de la página.
+   El wrapper preserva el espacio en el flujo del documento,
+   eliminando por completo cualquier pestañeo o salto de layout.
+   ========================================================== */
+
+.site-header-wrapper {
+    position: relative;
+    width: 100%;
+    min-height: 185px;
+}
+
+.site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    transition:
+        background-color 280ms ease,
+        backdrop-filter 280ms ease,
+        -webkit-backdrop-filter 280ms ease,
+        box-shadow 280ms ease,
+        border-color 280ms ease;
+}
+
+.site-header.is-scrolled {
+    background-color: rgba(13, 13, 13, 0.90);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(5, 108, 242, 0.35);
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.70);
+}
+
 
 /* ==========================================================
-   04. ELEMENTOS GENERALES
+   05. ELEMENTOS GENERALES
    ========================================================== */
 
 button,
@@ -139,11 +181,7 @@ button {
 
 
 /* ==========================================================
-   05. CONTENIDO PRINCIPAL
-
-   Limita la anchura máxima del contenido sin impedir que
-   utilice prácticamente toda la pantalla en dispositivos
-   pequeños.
+   06. CONTENIDO PRINCIPAL
    ========================================================== */
 
 .site-content {
@@ -154,86 +192,28 @@ button {
 
 
 /* ==========================================================
-   06. ÁREAS PRINCIPALES
-
-   HOME, SOLUCIONES y CONTACTO comparten este sistema.
-
-   No centramos aquí el contenido: cada área podrá definir
-   posteriormente su propia composición.
+   07. ÁREAS PRINCIPALES
    ========================================================== */
 
 .page-section {
     display: none;
-
     width: 100%;
     min-height: 70vh;
 }
 
-
 .page-section.active {
     display: block;
+    animation: fadeInSection 180ms ease forwards;
+}
+
+@keyframes fadeInSection {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 
 /* ==========================================================
-   07. TRANSICIÓN DE SALIDA
-
-   La sección sale con una leve inclinación en X y retrocede
-   en Z, como si el cubo la empujara hacia el fondo.
-   ========================================================== */
-
-.page-section.leaving {
-    opacity: 0;
-
-    transform:
-        perspective(1100px)
-        rotateX(2.5deg)
-        translateY(14px)
-        translateZ(-22px);
-
-    transition:
-        opacity 210ms cubic-bezier(0.4, 0, 1, 1),
-        transform 210ms cubic-bezier(0.4, 0, 1, 1);
-}
-
-
-/* ==========================================================
-   08. TRANSICIÓN DE ENTRADA
-
-   La nueva sección emerge desde el fondo con la inclinación
-   inversa, como si el cubo la trajera al frente.
-   ========================================================== */
-
-.page-section.entering {
-    display: block;
-
-    opacity: 0;
-
-    transform:
-        perspective(1100px)
-        rotateX(-2.5deg)
-        translateY(-14px)
-        translateZ(-22px);
-}
-
-
-.page-section.entering.entering-active {
-    opacity: 1;
-
-    transform:
-        perspective(1100px)
-        rotateX(0deg)
-        translateY(0)
-        translateZ(0);
-
-    transition:
-        opacity 300ms ease,
-        transform 300ms cubic-bezier(0.2, 0, 0.1, 1);
-}
-
-
-/* ==========================================================
-   09. TIPOGRAFÍA GENERAL
+   08. TIPOGRAFÍA GENERAL
    ========================================================== */
 
 h1,
@@ -243,15 +223,12 @@ p {
     margin-top: 0;
 }
 
-
 h1,
 h2,
 h3 {
     color: var(--text-primary);
-
     line-height: 1.15;
 }
-
 
 p {
     color: var(--text-secondary);
@@ -259,12 +236,11 @@ p {
 
 
 /* ==========================================================
-   10. PLACEHOLDER FOTOGRÁFICO
+   09. PLACEHOLDER FOTOGRÁFICO
 
-   Representa una fotografía todavía pendiente.
-
-   Su proporción puede modificarse posteriormente según
-   la composición definitiva y las fotografías disponibles.
+   Representa el encuadre de las fotografías o capturas pendientes.
+   Delineado superior marcado en el azul primario (#056CF2)
+   para garantizar nitidez y visibilidad óptima sobre el fondo.
    ========================================================== */
 
 .photo-placeholder {
@@ -273,17 +249,17 @@ p {
     justify-content: center;
 
     width: 100%;
-
     aspect-ratio: 4 / 3;
 
-    border: 1px solid var(--border-soft);
+    border: 1px solid rgba(5, 108, 242, 0.45);
+    border-top: 2.5px solid #056CF2;
     border-radius: 4px;
 
     background:
         linear-gradient(
             135deg,
-            rgba(255, 255, 255, 0.025),
-            rgba(255, 255, 255, 0.07)
+            rgba(5, 108, 242, 0.06),
+            rgba(3, 74, 166, 0.16)
         );
 
     color: var(--text-muted);
@@ -291,6 +267,10 @@ p {
     font-size: 0.75rem;
     font-weight: 500;
     letter-spacing: 0.12em;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.25),
+        0 4px 20px rgba(0, 0, 0, 0.45);
 
     /*
      Identity base para evitar que el stacking context cambie
@@ -305,7 +285,6 @@ p {
         border-color 320ms ease;
 }
 
-
 .photo-placeholder:hover {
     transform:
         perspective(900px)
@@ -313,20 +292,18 @@ p {
         rotateX(-1.2deg)
         translateZ(10px);
 
-    border-color: rgba(255, 255, 255, 0.22);
+    border-color: rgba(5, 108, 242, 0.75);
+    border-top-color: #056CF2;
 
     box-shadow:
-        -10px 16px 48px rgba(0, 0, 0, 0.35),
-        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        -10px 16px 48px rgba(0, 0, 0, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35),
+        0 0 22px rgba(5, 108, 242, 0.45);
 }
 
 
 /* ==========================================================
-   11. ACCESIBILIDAD — MOVIMIENTO REDUCIDO
-
-   Reducción selectiva por elemento en lugar de deshabilitar
-   globalmente: evita que los cortes bruscos resulten más
-   molestos que las propias animaciones.
+   10. ACCESIBILIDAD — MOVIMIENTO REDUCIDO
    ========================================================== */
 
 @media (prefers-reduced-motion: reduce) {
@@ -335,24 +312,9 @@ p {
         scroll-behavior: auto;
     }
 
-    /* Secciones: sólo opacidad, sin transforms 3D */
-
-    .page-section.leaving {
-        transform: none;
-        transition: opacity 150ms ease;
+    .page-section.active {
+        animation: none;
     }
-
-    .page-section.entering {
-        transform: none;
-    }
-
-    .page-section.entering.entering-active {
-        transform: none;
-        transition: opacity 180ms ease;
-    }
-
-
-    /* Placeholders: sin hover 3D */
 
     .photo-placeholder {
         transition: border-color 150ms ease;
@@ -363,11 +325,12 @@ p {
         box-shadow: none;
     }
 
-
-    /* Cubo: sin animación en el giro de navegación */
-
     .navigation-cube {
         transition: none;
     }
 
 }
+
+
+
+

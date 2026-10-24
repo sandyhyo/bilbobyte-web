@@ -87,6 +87,7 @@
          opciones navegables en las diferentes orientaciones.
          ===================================================== -->
 
+    <div class="site-header-wrapper">
     <header class="site-header">
 
         <nav
@@ -95,75 +96,97 @@
 
 
             <!-- =================================================
-                 ESCENA DEL CUBO
+                 ESCENA Y CONTENEDOR DEL CUBO
                  ================================================= -->
 
-            <div class="cube-scene">
+            <div class="cube-area">
 
                 <div
-                    class="navigation-cube"
-                    id="navigationCube">
+                    class="cube-scene"
+                    id="cubeScene"
+                    title="Arrastra o haz clic para rotar el cubo"
+                    aria-label="Cubo interactivo 3D de navegación">
 
+                    <!-- Guía orbital 3D -->
+                    <div class="cube-orbit" aria-hidden="true"></div>
 
-                    <!-- HOME — cara frontal -->
+                    <div
+                        class="navigation-cube"
+                        id="navigationCube">
 
-                    <button
-                        class="cube-face cube-face--front"
-                        type="button"
-                        data-section="home">
-                        HOME
-                    </button>
+                        <!-- HOME — cara frontal (lado 2) -->
+                        <button
+                            class="cube-face cube-face--front active"
+                            type="button"
+                            data-section="home"
+                            data-side="2"
+                            aria-label="Ir a Home">
+                            HOME
+                        </button>
 
+                        <!-- SOLUCIONES — cara derecha (lado 3) -->
+                        <button
+                            class="cube-face cube-face--right"
+                            type="button"
+                            data-section="solutions"
+                            data-side="3"
+                            aria-label="Ir a Soluciones">
+                            SOLUCIONES
+                        </button>
 
-                    <!-- SOLUCIONES — cara derecha -->
+                        <!-- CONTACTO — cara superior (lado 1) -->
+                        <button
+                            class="cube-face cube-face--top"
+                            type="button"
+                            data-section="contact"
+                            data-side="1"
+                            aria-label="Ir a Contacto">
+                            CONTACTO
+                        </button>
 
-                    <button
-                        class="cube-face cube-face--right"
-                        type="button"
-                        data-section="solutions">
-                        SOLUCIONES
-                    </button>
+                        <!-- SOLUCIONES — cara izquierda (lado 5) -->
+                        <button
+                            class="cube-face cube-face--left"
+                            type="button"
+                            data-section="solutions"
+                            data-side="5"
+                            aria-label="Ir a Soluciones">
+                            SOLUCIONES
+                        </button>
 
+                        <!-- HOME — cara trasera (lado 4) -->
+                        <button
+                            class="cube-face cube-face--back"
+                            type="button"
+                            data-section="home"
+                            data-side="4"
+                            aria-label="Ir a Home">
+                            HOME
+                        </button>
 
-                    <!-- CONTACTO — cara superior -->
+                        <!-- CONTACTO — cara inferior (lado 6) -->
+                        <button
+                            class="cube-face cube-face--bottom"
+                            type="button"
+                            data-section="contact"
+                            data-side="6"
+                            aria-label="Ir a Contacto">
+                            CONTACTO
+                        </button>
 
-                    <button
-                        class="cube-face cube-face--top"
-                        type="button"
-                        data-section="contact">
-                        CONTACTO
-                    </button>
+                    </div>
 
+                </div>
 
-                    <!-- SOLUCIONES — cara izquierda -->
-
-                    <button
-                        class="cube-face cube-face--left"
-                        type="button"
-                        data-section="solutions">
-                        SOLUCIONES
-                    </button>
-
-
-                    <!-- HOME — cara trasera -->
-
-                    <button
-                        class="cube-face cube-face--back"
-                        type="button"
-                        data-section="home">
-                        HOME
-                    </button>
-
-
-                    <!-- CONTACTO — cara inferior -->
-
-                    <button
-                        class="cube-face cube-face--bottom"
-                        type="button"
-                        data-section="contact">
-                        CONTACTO
-                    </button>
-
+                <!-- Indicativo de interactividad / rotación del cubo -->
+                <div
+                    class="cube-hint"
+                    id="cubeHint"
+                    aria-hidden="true">
+                    <svg class="cube-hint__icon" viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.19"/>
+                    </svg>
+                    <span class="cube-hint__label">Arrastra para girar</span>
                 </div>
 
             </div>
@@ -204,6 +227,7 @@
         </nav>
 
     </header>
+    </div>
 
 
     <!-- =====================================================
@@ -298,72 +322,6 @@
 
             </div>
 
-
-            <!-- =============================================
-                 HOME / PRODUCTOS
-                 ============================================= -->
-
-            <div class="home-block home-block--products">
-
-                <div class="home-block__text">
-
-                    <h2>
-                        Soluciones
-                    </h2>
-
-                    <p>
-                        Después de analizar las áreas que habitualmente requieren más atención en el desarrollo tecnológico de una empresa, hemos preparado una serie de propuestas orientadas a cubrir sus principales necesidades y facilitar su crecimiento. Todas pensadas para acompañar su evolución, proteger su información, materializar sus ideas y perdurar a largo plazo.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <!-- =============================================
-                 HOME / SELECTOR DE SOLUCIONES
-
-                 Más adelante tendrá interacción propia.
-                 Seleccionar una solución llevará a la cara
-                 SOLUCIONES y abrirá directamente la elegida.
-                 ============================================= -->
-
-            <nav
-                class="home-solutions"
-                aria-label="Soluciones BilboByte">
-
-                <button
-                    type="button"
-                    data-product="connect">
-                    CONNECT
-                </button>
-
-                <button
-                    type="button"
-                    data-product="core">
-                    CORE
-                </button>
-
-                <button
-                    type="button"
-                    data-product="vault">
-                    VAULT
-                </button>
-
-                <button
-                    type="button"
-                    data-product="suite">
-                    SUITE
-                </button>
-
-                <button
-                    type="button"
-                    data-product="print">
-                    PRINT
-                </button>
-
-            </nav>
-
         </section>
 
 
@@ -389,8 +347,7 @@
                 <div class="solutions-header__text">
 
                     <h2>
-                        Soluciones
-                    </h2>
+La tecnología cambia. Tus posibilidades también.                    </h2>
 
                     <p>
                         Después de analizar las áreas que habitualmente requieren más atención en el desarrollo tecnológico de una empresa, hemos preparado una serie de propuestas orientadas a cubrir sus principales necesidades y facilitar su crecimiento. Todas pensadas para acompañar su evolución, proteger su información, materializar sus ideas y perdurar a largo plazo.
