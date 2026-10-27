@@ -423,7 +423,7 @@ if (contactForm) {
          https://web3forms.com (gratis, sin registro de cuenta).
         */
 
-        const WEB3FORMS_ACCESS_KEY = "56f32ab1-3283-43b9-9558-63c7818023b7";
+        const WEB3FORMS_ACCESS_KEY = "0777d601-dc7e-41b7-b538-f0d270dc4cd2";
 
         const formPayload = {
             access_key:   WEB3FORMS_ACCESS_KEY,
