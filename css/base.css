@@ -1,0 +1,342 @@
+/* ==========================================================
+   01. VARIABLES GLOBALES
+
+   Punto central para modificar la identidad visual,
+   dimensiones generales y espaciados de la web.
+   Actualizada según paleta oficial:
+   #056CF2 / #0460D9 / #034AA6 / #022859 / #0D0D0D
+   ========================================================== */
+
+:root {
+
+    /* ---------- Colores Principales (Paleta BilboByte) ---------- */
+
+    --bg-primary: #0D0D0D;
+    --bg-secondary: #022859;
+    --bg-soft: #034AA6;
+
+    --brand-secondary: #0460D9;
+    --brand-primary: #056CF2;
+
+    --accent-glow: rgba(5, 108, 242, 0.4);
+
+    --text-primary: #ffffff;
+    --text-secondary: #d4dae0;
+    --text-muted: #8b9bb0;
+
+    --border-soft: rgba(5, 108, 242, 0.22);
+
+
+    /* ---------- Dimensiones ---------- */
+
+    --content-width: 1200px;
+    --reading-width: 680px;
+
+
+    /* ---------- Espaciado ---------- */
+
+    --section-space: clamp(5rem, 10vw, 9rem);
+    --block-gap: clamp(2.5rem, 6vw, 6rem);
+}
+
+
+/* ==========================================================
+   02. RESET BÁSICO
+   ========================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    margin: 0;
+    padding: 0;
+
+    background-color: var(--bg-primary);
+    scroll-behavior: smooth;
+
+    /* Evita scroll horizontal provocado por elementos que desbordan */
+    overflow-x: hidden;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+
+    /* Refuerzo: también en body para cubrir casos edge en móvil */
+    overflow-x: hidden;
+}
+
+
+/* ==========================================================
+   03. FONDO ANIMADO Y CUERPO DE LA WEB
+
+   El fondo combina el canvas de circuito con degradados
+   radiales suaves en tonos de la paleta para conservar la identidad
+   y asegurar la máxima legibilidad de los textos.
+   ========================================================== */
+
+#circuit-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            circle at 75% 20%,
+            rgba(3, 74, 166, 0.22),
+            transparent 45%
+        ),
+        radial-gradient(
+            circle at 15% 65%,
+            rgba(2, 40, 89, 0.35),
+            transparent 48%
+        ),
+        var(--bg-primary);
+}
+
+#circuit-bg canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    opacity: 0.72;
+}
+
+#circuit-bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        ellipse at center,
+        rgba(13, 13, 13, 0.15) 0%,
+        rgba(13, 13, 13, 0.55) 65%,
+        rgba(13, 13, 13, 0.90) 100%
+    );
+    pointer-events: none;
+}
+
+body {
+    min-height: 100vh;
+    background: transparent;
+
+    color: var(--text-primary);
+
+    font-family:
+        "IBM Plex Sans",
+        Arial,
+        sans-serif;
+
+    font-size: 16px;
+    line-height: 1.7;
+
+    -webkit-font-smoothing: antialiased;
+}
+
+
+/* ==========================================================
+   04. CABECERA FLOTANTE / MÓVIL
+   Acompaña la navegación al bajar a lo largo de la página.
+   El wrapper preserva el espacio en el flujo del documento,
+   eliminando por completo cualquier pestañeo o salto de layout.
+   ========================================================== */
+
+.site-header-wrapper {
+    position: relative;
+    width: 100%;
+    min-height: 185px;
+}
+
+.site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    transition:
+        background-color 280ms ease,
+        backdrop-filter 280ms ease,
+        -webkit-backdrop-filter 280ms ease,
+        box-shadow 280ms ease,
+        border-color 280ms ease;
+}
+
+.site-header.is-scrolled {
+    background-color: rgba(13, 13, 13, 0.90);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(5, 108, 242, 0.35);
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.70);
+}
+
+
+/* ==========================================================
+   05. ELEMENTOS GENERALES
+   ========================================================== */
+
+button,
+input,
+textarea {
+    font: inherit;
+}
+
+button {
+    color: inherit;
+}
+
+
+/* ==========================================================
+   06. CONTENIDO PRINCIPAL
+   ========================================================== */
+
+.site-content {
+    width: min(90%, var(--content-width));
+
+    margin: 0 auto;
+}
+
+
+/* ==========================================================
+   07. ÁREAS PRINCIPALES
+   ========================================================== */
+
+.page-section {
+    display: none;
+    width: 100%;
+    min-height: 70vh;
+}
+
+.page-section.active {
+    display: block;
+    animation: fadeInSection 180ms ease forwards;
+}
+
+@keyframes fadeInSection {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+
+/* ==========================================================
+   08. TIPOGRAFÍA GENERAL
+   ========================================================== */
+
+h1,
+h2,
+h3,
+p {
+    margin-top: 0;
+}
+
+h1,
+h2,
+h3 {
+    color: var(--text-primary);
+    line-height: 1.15;
+}
+
+p {
+    color: var(--text-secondary);
+}
+
+
+/* ==========================================================
+   09. PLACEHOLDER FOTOGRÁFICO
+
+   Representa el encuadre de las fotografías o capturas pendientes.
+   Delineado superior marcado en el azul primario (#056CF2)
+   para garantizar nitidez y visibilidad óptima sobre el fondo.
+   ========================================================== */
+
+.photo-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    aspect-ratio: 4 / 3;
+
+    border: 1px solid rgba(5, 108, 242, 0.45);
+    border-top: 2.5px solid #056CF2;
+    border-radius: 4px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(5, 108, 242, 0.06),
+            rgba(3, 74, 166, 0.16)
+        );
+
+    color: var(--text-muted);
+
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.25),
+        0 4px 20px rgba(0, 0, 0, 0.45);
+
+    /*
+     Identity base para evitar que el stacking context cambie
+     sólo en el hover, causando saltos de z-index inesperados.
+    */
+    translate: 0px 0px;
+    rotate: 0deg;
+
+    transition:
+        transform 320ms cubic-bezier(0.2, 0, 0.15, 1),
+        box-shadow 320ms ease,
+        border-color 320ms ease;
+}
+
+.photo-placeholder:hover {
+    transform:
+        perspective(900px)
+        rotateY(2.5deg)
+        rotateX(-1.2deg)
+        translateZ(10px);
+
+    border-color: rgba(5, 108, 242, 0.75);
+    border-top-color: #056CF2;
+
+    box-shadow:
+        -10px 16px 48px rgba(0, 0, 0, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35),
+        0 0 22px rgba(5, 108, 242, 0.45);
+}
+
+
+/* ==========================================================
+   10. ACCESIBILIDAD — MOVIMIENTO REDUCIDO
+   ========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    html {
+        scroll-behavior: auto;
+    }
+
+    .page-section.active {
+        animation: none;
+    }
+
+    .photo-placeholder {
+        transition: border-color 150ms ease;
+    }
+
+    .photo-placeholder:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    .navigation-cube {
+        transition: none;
+    }
+
+}
+
+
+
+

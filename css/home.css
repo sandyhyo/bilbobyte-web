@@ -1,0 +1,358 @@
+/* ==========================================================
+   01. HOME — CONFIGURACIÓN GENERAL
+   ========================================================== */
+
+#home {
+    padding-bottom: var(--section-space);
+}
+
+
+/* ==========================================================
+   02. HERO
+
+   Primera impresión de BilboByte.
+
+   El logotipo sustituirá posteriormente al tratamiento
+   tipográfico provisional del nombre.
+   ========================================================== */
+
+.home-hero {
+    display: flex;
+    align-items: center;
+
+    min-height: 55vh;
+
+    padding:
+        clamp(4rem, 10vh, 8rem)
+        0
+        var(--section-space);
+}
+
+
+.home-hero__content {
+    max-width: 900px;
+}
+
+
+.home-hero__title {
+    margin-bottom: 1rem;
+
+    font-size: clamp(4rem, 9vw, 8.5rem);
+    font-weight: 700;
+
+    letter-spacing: -0.045em;
+
+    display: inline-block;
+}
+
+
+/* Contenedor del texto del título */
+
+.home-hero__title-inner {
+    font-family: 'Montserrat', 'Arial Black', sans-serif;
+    font-weight: 900;
+    font-size: 1em;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    line-height: 1;
+}
+
+
+/* "BILBO" — degradado plateado/metálico */
+
+.home-hero__title-metallic {
+    background: linear-gradient(
+        180deg,
+        #ffffff 0%,
+        #ffffff 20%,
+        #f0f0f0 40%,
+        #cccccc 65%,
+        #999999 85%,
+        #bebebe 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.6));
+}
+
+
+/* "BYTE" — degradado azul */
+
+.home-hero__title-blue {
+    background: linear-gradient(
+        180deg,
+        #3b8aff 0%,
+        #1e73ff 50%,
+        #0d52cd 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.6));
+}
+
+
+.home-hero__claim {
+    max-width: 700px;
+
+    margin-bottom: 0;
+
+    color: var(--text-secondary);
+
+    font-size: clamp(1.15rem, 2vw, 1.55rem);
+    font-weight: 400;
+
+    line-height: 1.45;
+}
+
+
+/* ==========================================================
+   03. BLOQUES DE HOME
+
+   Estructura reutilizable para combinar texto y fotografía.
+   ========================================================== */
+
+.home-block {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(320px, 0.85fr);
+
+    align-items: center;
+
+    gap: var(--block-gap);
+
+    padding: var(--section-space) 0;
+
+    border-top: 2.5px solid rgba(5, 108, 242, 0.75);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+
+/* ==========================================================
+   04. TEXTO DE LOS BLOQUES
+   ========================================================== */
+
+.home-block__text {
+    max-width: var(--reading-width);
+}
+
+
+.home-block__text h2 {
+    margin-bottom: 2rem;
+
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 600;
+
+    letter-spacing: -0.025em;
+}
+
+
+.home-block__text p {
+    margin-bottom: 1.4rem;
+
+    font-size: clamp(1rem, 1.3vw, 1.1rem);
+}
+
+
+.home-block__text p:last-child {
+    margin-bottom: 0;
+}
+
+
+/* ==========================================================
+   05. PRESENTACIÓN
+
+   El bloque utiliza texto + fotografía.
+
+   La fotografía definitiva mostrará previsiblemente a los
+   responsables de BilboByte trabajando, sin necesidad de
+   mostrar sus rostros.
+   ========================================================== */
+
+.home-block--presentation .photo-placeholder {
+    max-width: 520px;
+
+    justify-self: end;
+}
+
+
+/* ==========================================================
+   06. PRODUCTOS
+
+   De momento este bloque es principalmente textual.
+   Mantiene espacio y jerarquía propios antes del selector
+   de soluciones.
+   ========================================================== */
+
+.home-block--products {
+    grid-template-columns: 1fr;
+}
+
+
+.home-block--products .home-block__text {
+    max-width: 850px;
+}
+
+
+/* ==========================================================
+   07. SELECTOR DE SOLUCIONES
+
+   Primera representación del navegador:
+   CONNECT · CORE · VAULT · SUITE · PRINT
+
+   Todavía no tiene conectada la navegación.
+   ========================================================== */
+
+.home-solutions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 1.5rem;
+
+    padding:
+        clamp(3rem, 6vw, 5rem)
+        0;
+
+    border-top: 1px solid var(--border-soft);
+    border-bottom: 1px solid var(--border-soft);
+}
+
+
+.home-solutions button {
+    position: relative;
+
+    padding: 0.7rem 0;
+
+    border: 0;
+    background: transparent;
+
+    color: var(--text-muted);
+
+    font-size: clamp(0.85rem, 1.4vw, 1.05rem);
+    font-weight: 500;
+
+    letter-spacing: 0.08em;
+
+    cursor: pointer;
+
+    /*
+     Identity base obligatoria para que el stacking context
+     no cambie sólo en el hover (per individual-transform-properties).
+    */
+    translate: 0px;
+
+    transition:
+        color 200ms ease,
+        transform 260ms cubic-bezier(0.2, 0, 0.15, 1);
+}
+
+
+.home-solutions button:hover {
+    color: var(--text-primary);
+
+    transform:
+        perspective(500px)
+        translateZ(10px)
+        scale(1.04);
+}
+
+
+/* Línea blanca que aparecerá bajo la solución enfocada */
+
+.home-solutions button::after {
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+    bottom: 0;
+
+    width: 0;
+    height: 2px;
+
+    background: var(--text-primary);
+
+    transform: translateX(-50%);
+
+    transition: width 220ms ease;
+}
+
+
+.home-solutions button:hover::after {
+    width: 28px;
+}
+
+
+/* ==========================================================
+   08. TABLET
+   ========================================================== */
+
+@media (max-width: 900px) {
+
+    .home-block {
+        grid-template-columns: 1fr;
+    }
+
+
+    .home-block--presentation .photo-placeholder {
+        max-width: 650px;
+
+        justify-self: start;
+    }
+
+
+    .home-solutions {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+
+        column-gap: 2rem;
+    }
+}
+
+
+/* ==========================================================
+   09. MÓVIL
+   ========================================================== */
+
+@media (max-width: 600px) {
+
+    .home-hero {
+        min-height: 55vh;
+
+        padding-top: 3rem;
+    }
+
+
+    .home-hero__title {
+        /* "BILBOBYTE" tiene 9 caracteres en Montserrat 900.
+           El contenedor es 90vw → cada carácter ocupa ~0.67em de ancho.
+           Máximo seguro: 90vw / (9 × 0.67) ≈ 14.9vw por em → usamos 13vw
+           con un mínimo cómodo de 2rem y un máximo de 4rem. */
+        font-size: clamp(2rem, 13vw, 4rem);
+        display: block;
+        max-width: 100%;
+    }
+
+
+    .home-block {
+        padding:
+            clamp(4rem, 15vw, 6rem)
+            0;
+    }
+
+
+    .photo-placeholder {
+        aspect-ratio: 16 / 10;
+    }
+
+
+    .home-solutions {
+        gap: 1rem 1.6rem;
+    }
+}
