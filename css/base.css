@@ -319,7 +319,6 @@ p {
     display: block;
 
     width: 100%;
-    aspect-ratio: 4 / 3;
 
     border: 1px solid rgba(5, 108, 242, 0.45);
     border-top: 2.5px solid #056CF2;
@@ -343,9 +342,7 @@ p {
 .product-panel__image img {
     display: block;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
+    height: auto;
 }
 
 .product-panel__image:hover {
