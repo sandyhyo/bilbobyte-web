@@ -349,8 +349,7 @@
     }
 
 
-    .photo-placeholder,
-    .product-panel__image {
+    .photo-placeholder {
         aspect-ratio: 16 / 10;
     }
 
